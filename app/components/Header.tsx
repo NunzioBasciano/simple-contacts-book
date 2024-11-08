@@ -11,9 +11,8 @@ function Header(props: IHeaderProps) {
   return (
     <header className="bg-[var(--orange)] p-3 flex items-center justify-between">
       <h1 className="text-xl">{label}</h1>
-      <nav>
-        <Button image="/search.png" imageAlt={labels.searchAlt} />
-      </nav>
+
+      <Button image="/search.png" imageAlt={labels.searchAlt} />
     </header>
   );
 }

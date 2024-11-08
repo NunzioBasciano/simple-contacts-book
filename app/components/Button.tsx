@@ -12,13 +12,7 @@ function Button(props: IButtonProps) {
   return (
     <button>
       {image && imageAlt && (
-        <Image
-          src={image}
-          alt={imageAlt}
-          width={20}
-          height={20}
-          objectFit="cover"
-        />
+        <Image src={image} alt={imageAlt} width={20} height={20} />
       )}
 
       {label}
