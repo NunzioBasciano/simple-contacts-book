@@ -6,7 +6,6 @@ import { labels } from "../data/label";
 function Favorites() {
   return (
     <>
-      <Header label={labels.favoritesLabel} />
       <MainSection />
     </>
   );

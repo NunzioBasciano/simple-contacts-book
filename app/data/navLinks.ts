@@ -15,6 +15,6 @@ export const navLinks = [
       label: "Aggiungi",
       alt: "Add-icon",
       image: "/add-contact.png",
-      link: "/favorites",
+      link: "/add-contact",
     },
   ];
