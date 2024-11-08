@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "./Button";
-import { labels } from "../data/labels";
+import { labels } from "../data/label";
 
 interface IHeaderProps {
   label: string;
