@@ -47,8 +47,8 @@ function MainSection() {
       <section>
         <ul className="flex flex-col justify-center items-center">
           {letters.map((item, index) => (
-            <Link href={"/"}>
-              <li key={index}>{item}</li>
+            <Link href={"/"} key={index}>
+              <li>{item}</li>
             </Link>
           ))}
         </ul>
