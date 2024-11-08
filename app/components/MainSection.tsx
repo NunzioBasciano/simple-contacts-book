@@ -34,8 +34,8 @@ function MainSection() {
     <main className="m-4 flex justify-between">
       <section>
         <ul className="flex flex-col gap-4">
-          {contactList.map((item) => (
-            <li className="flex items-center gap-2" key={item.id}>
+          {contactList.map((item, index) => (
+            <li className="flex items-center gap-2" key={index}>
               <div className="bg-[var(--orange)] p-2 rounded-full w-[30px] h-[30px] flex items-center justify-center">
                 {item.surName[0]}
               </div>
