@@ -36,16 +36,16 @@ function AddContact() {
               <Image
                 src="/close.png"
                 alt="close icon "
-                width={10}
-                height={10}
+                width={20}
+                height={20}
                 objectFit="cover"
               />
             </Link>
-            <h2>Add contact</h2>
+            <h2 className="text-2xl">Add contact</h2>
           </div>
           <Button
             label="Save"
-            style="bg-[var(--orange)] px-4 rounded-xl text-white flex item-center justiy-center text-sm"
+            style="bg-[var(--orange)] px-4 rounded-xl text-white flex item-center justify-center text-2zl"
           />
         </div>
         <div className="flex flex-col px-9">
