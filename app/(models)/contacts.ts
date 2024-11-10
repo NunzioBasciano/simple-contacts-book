@@ -1,8 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface IContact {
-    _id: number;
-    image?: string;
     firstName?: string;
     lastName?: string;
     phone?: string;
@@ -14,7 +12,6 @@ mongoose.connect(process.env.MONGODB_URI!);
 mongoose.Promise = global.Promise;
 
 const contactSchema = new Schema({
-    image: { type: String },
     firstName: { type: String },
     lastName: { type: String }, 
     phone: { type: String }, 
