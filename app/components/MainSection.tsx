@@ -3,28 +3,7 @@ import React, { useEffect, useState } from "react";
 import { letters } from "../data/letters";
 import Link from "next/link";
 import { IContact } from "../(models)/contacts";
-
-const fetchData = async (): Promise<{ contacts: IContact[] }> => {
-  try {
-    const res = await fetch(`/api/contacts`, {
-      cache: "no-cache",
-    });
-
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-    const data = await res.json();
-    console.log(data);
-    return data;
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("Error fetching data:", error.message);
-      throw new Error(error.message);
-    } else {
-      throw new Error("Unknown error occurred");
-    }
-  }
-};
+import { fetchData } from "../actions/contacts";
 
 function MainSection() {
   const [contacts, setContacts] = useState<IContact[]>([]);
@@ -36,7 +15,6 @@ function MainSection() {
       setLoading(true);
       try {
         const data = await fetchData();
-        console.log(data);
         setContacts(data.contacts);
         setLoading(false);
       } catch (error: unknown) {
