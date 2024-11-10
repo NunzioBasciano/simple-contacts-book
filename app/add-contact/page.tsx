@@ -30,26 +30,28 @@ function AddContact() {
     <section>
       <form onSubmit={handleSubmit}>
         {/* Section close image, add contact, save button */}
-        <div className="flex p-3 justify-between">
-          <div className="flex items-center gap-3">
-            <Link href={"/"}>
-              <Image
-                src="/close.png"
-                alt="close icon "
-                width={10}
-                height={10}
-                objectFit="cover"
-              />
-            </Link>
-            <h2>Add contact</h2>
+        <div className="my-3">
+          <div className="flex p-3 justify-between">
+            <div className="flex items-center gap-3">
+              <Link href={"/"}>
+                <Image
+                  src="/close.png"
+                  alt="close icon "
+                  width={20}
+                  height={20}
+                  objectFit="cover"
+                />
+              </Link>
+              <h2 className="text-3xl">Add contact</h2>
+            </div>
+            <Button
+              label="Save"
+              style="bg-[var(--orange)] px-4 py-1 rounded-xl text-white flex item-center justify-center text-2zl"
+            />
           </div>
-          <Button
-            label="Save"
-            style="bg-[var(--orange)] px-4 rounded-xl text-white flex item-center justiy-center text-sm"
-          />
         </div>
         <div className="flex flex-col px-9">
-          <InputBox
+          {/*           <InputBox
             inputType="file"
             inputName={"image"}
             label="Add image"
@@ -60,7 +62,7 @@ function AddContact() {
                 target: { name: "image", value },
               } as React.ChangeEvent<HTMLInputElement>)
             }
-          />
+          /> */}
           <InputBox
             inputName={"firstName"}
             label="Name:"
