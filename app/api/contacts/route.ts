@@ -12,3 +12,16 @@ export async function GET() {
         return NextResponse.json({ error }, { status: 500 })
     }
 }
+
+export async function POST(request: Request) {
+    try {
+        
+        const data = await request.json(); 
+        const newContact = await Contact.create(data); 
+        
+        return NextResponse.json(newContact, { status: 201 }); 
+    } catch (error) {
+        console.error("Errore durante il salvataggio del contatto:", error);
+        return NextResponse.json({ error: "Errore durante il salvataggio del contatto" }, { status: 500 });
+    }
+}

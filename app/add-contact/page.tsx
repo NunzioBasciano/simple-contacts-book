@@ -4,15 +4,16 @@ import React, { useState } from "react";
 import Button from "../components/Button";
 import InputBox from "../components/InputBox";
 import Link from "next/link";
+import { saveContact } from "../actions/saveContact";
 
 function AddContact() {
   const [formData, setFormData] = useState({
-    image: "",
     firstName: "",
     lastName: "",
     phone: "",
     email: "",
   });
+  const [message, setMessage] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -22,12 +23,19 @@ function AddContact() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    try {
+      const savedContact = await saveContact(formData);
+      setMessage("Contatto salvato con successo!");
+      setFormData({ firstName: "", lastName: "", phone: "", email: "" });
+    } catch (error) {
+      setMessage("Errore durante il salvataggio del contatto.");
+    }
   };
 
   return (
     <section>
+      {message && <p>{message}</p>}
       <form onSubmit={handleSubmit}>
         {/* Section close image, add contact, save button */}
         <div className="my-3">
