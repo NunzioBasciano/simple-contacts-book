@@ -87,15 +87,6 @@ function Favorites() {
       ) : (
         <>
           <section>
-            {/* Barra di ricerca */}
-            <input
-              type="text"
-              placeholder="Search by name, surname, or email"
-              value={searchQuery}
-              onChange={handleSearch}
-              className="mb-4 p-2 border border-gray-300 rounded"
-            />
-
             {/* Elenco dei contatti filtrati */}
             <ul className="flex flex-col gap-4">
               {filteredContacts.map((item) => (
