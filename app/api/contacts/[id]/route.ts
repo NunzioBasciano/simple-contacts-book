@@ -30,3 +30,25 @@ export async function GET(
     return NextResponse.json({ error: "Errore del server" }, { status: 500 });
   }
 }
+
+// Funzione per aggiornare un contatto
+export async function PUT(req: Request, { params }: {params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    
+    try {
+      const body = await req.json();
+      const updatedContact = await Contact.findByIdAndUpdate(id, body, {
+        new: true, // Restituisce il contatto aggiornato
+        runValidators: true, // Esegui la validazione del modello
+      });
+  
+      if (!updatedContact) {
+        return NextResponse.json({ error: "Contact not found" }, { status: 404 });
+      }
+  
+      return NextResponse.json(updatedContact, { status: 200 });
+    } catch (error) {
+      console.error(error);
+      return NextResponse.json({ error: "Error updating contact" }, { status: 500 });
+    }
+  }

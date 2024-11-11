@@ -69,22 +69,24 @@ function Contact({
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/contacts", {
-        method: "POST", // Change to "PUT" if updating
+      // Utilizza l'ID del contatto nella URL per la PUT request
+      const res = await fetch(`/api/contacts/${formData._id}`, {
+        method: "PUT", // Cambia il metodo a "PUT"
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData), // Invia i dati aggiornati
       });
+
       if (!res.ok) {
-        throw new Error("Error creating/updating contact");
+        throw new Error("Error updating contact");
       }
       const result = await res.json();
-      console.log(result);
+      console.log("Updated contact:", result);
+      // Puoi anche aggiungere una logica per aggiornare la UI o fare un redirect
     } catch (error) {
       console.error("Error:", error);
       setErrorMessage("Error saving contact");
