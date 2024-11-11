@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 export interface IContact {
+    _id?: string;
     firstName?: string;
     lastName?: string;
     phone?: string;
