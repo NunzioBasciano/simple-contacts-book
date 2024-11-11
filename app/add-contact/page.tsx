@@ -12,6 +12,7 @@ function AddContact() {
     lastName: "",
     phone: "",
     email: "",
+    isFavorite: false,
   });
   const [message, setMessage] = useState<string | null>(null);
 
@@ -29,7 +30,13 @@ function AddContact() {
       const savedContact = await saveContact(formData);
       console.log(savedContact);
       setMessage("Contatto salvato con successo!");
-      setFormData({ firstName: "", lastName: "", phone: "", email: "" });
+      setFormData({
+        firstName: "",
+        lastName: "",
+        phone: "",
+        email: "",
+        isFavorite: false,
+      });
     } catch (error) {
       setMessage("Errore durante il salvataggio del contatto.");
       console.log(error);
@@ -63,18 +70,6 @@ function AddContact() {
           </div>
         </div>
         <div className="flex flex-col px-9">
-          {/*           <InputBox
-            inputType="file"
-            inputName={"image"}
-            label="Add image"
-            placeholder="Add image"
-            value={formData.image}
-            setValue={(value) =>
-              handleChange({
-                target: { name: "image", value },
-              } as React.ChangeEvent<HTMLInputElement>)
-            }
-          /> */}
           <InputBox
             inputName={"firstName"}
             label="Name:"
