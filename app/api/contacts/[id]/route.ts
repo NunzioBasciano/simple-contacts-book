@@ -52,3 +52,30 @@ export async function PUT(req: Request, { params }: {params: Promise<{ id: strin
       return NextResponse.json({ error: "Error updating contact" }, { status: 500 });
     }
   }
+
+  // Funzione per eliminare un contatto
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    // Risolviamo il parametro 'id' dalla promessa
+    const { id } = await params;
+
+    // Verifica che l'ID sia valido
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      console.error("ID non valido:", id);
+      return NextResponse.json({ error: "ID non valido" }, { status: 400 });
+    }
+
+    // Trova e elimina il contatto dal database
+    const deletedContact = await Contact.findByIdAndDelete(id);
+
+    if (!deletedContact) {
+      return NextResponse.json({ error: "Contatto non trovato" }, { status: 404 });
+    }
+
+    // Restituisci una risposta di successo
+    return NextResponse.json({ message: "Contatto eliminato con successo" }, { status: 200 });
+  } catch (error) {
+    console.error("Errore nella richiesta di eliminazione:", error);
+    return NextResponse.json({ error: "Errore del server" }, { status: 500 });
+  }
+}

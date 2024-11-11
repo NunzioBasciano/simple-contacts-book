@@ -1,5 +1,4 @@
 "use client";
-import { IContact } from "@/app/(models)/contacts";
 import { getDetail } from "@/app/actions/getDetail";
 import Button from "@/app/components/Button";
 import InputBox from "@/app/components/InputBox";
@@ -19,33 +18,30 @@ function Contact({
     phone: "",
     email: "",
   });
-  const [contact, setContact] = useState<IContact | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [id, setId] = useState<string>("");
 
-  // Function to fetch contact details once params are resolved
   useEffect(() => {
     const fetchContact = async () => {
       setLoading(true);
       try {
-        // Sblocca params dalla Promise
         const params = await paramsPromise;
         const contactId = params.id;
 
         if (id !== contactId) {
-          setId(contactId); // Aggiorna l'id solo se è cambiato
-        }
+          setId(contactId);
+          const fetchedContact = await getDetail(contactId);
 
-        const fetchedContact = await getDetail(contactId);
-        setContact(fetchedContact);
-        setFormData({
-          _id: fetchedContact._id,
-          firstName: fetchedContact.firstName,
-          lastName: fetchedContact.lastName,
-          phone: fetchedContact.phone,
-          email: fetchedContact.email,
-        });
+          // Imposta direttamente formData senza usare `contact`
+          setFormData({
+            _id: fetchedContact._id,
+            firstName: fetchedContact.firstName,
+            lastName: fetchedContact.lastName,
+            phone: fetchedContact.phone,
+            email: fetchedContact.email,
+          });
+        }
       } catch (error: unknown) {
         if (error instanceof Error) {
           setErrorMessage(error.message);
@@ -58,7 +54,7 @@ function Contact({
     };
 
     fetchContact();
-  }, [paramsPromise, id]); // Dipende anche da id per evitare fetch inutili
+  }, [paramsPromise, id]); // Aggiungi `id` per evitare chiamate inutili
 
   // Handle form changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,6 +89,29 @@ function Contact({
     }
   };
 
+  // Handle delete contact
+  const handleDelete = async () => {
+    if (window.confirm("Are you sure you want to delete this contact?")) {
+      try {
+        const res = await fetch(`/api/contacts/${formData._id}`, {
+          method: "DELETE", // DELETE request to the server
+        });
+
+        if (!res.ok) {
+          throw new Error("Error deleting contact");
+        }
+
+        // If successful, redirect or update UI
+        alert("Contact deleted successfully");
+        // Redirect to home page or other appropriate page
+        window.location.href = "/";
+      } catch (error) {
+        console.error("Error:", error);
+        setErrorMessage("Error deleting contact");
+      }
+    }
+  };
+
   return (
     <section>
       {errorMessage && <p>{errorMessage}</p>}
@@ -100,75 +119,84 @@ function Contact({
         <p>Loading...</p>
       ) : (
         id && (
-          <form onSubmit={handleSubmit}>
-            <div className="my-3">
-              <div className="flex p-3 justify-between">
-                <div className="flex items-center gap-3">
-                  <Link href={"/"}>
-                    <Image
-                      src="/close.png"
-                      alt="close icon"
-                      width={20}
-                      height={20}
-                    />
-                  </Link>
-                  <h2 className="text-3xl">Add contact</h2>
+          <>
+            <form onSubmit={handleSubmit}>
+              <div className="my-3">
+                <div className="flex p-3 justify-between">
+                  <div className="flex items-center gap-3">
+                    <Link href={"/"}>
+                      <Image
+                        src="/close.png"
+                        alt="close icon"
+                        width={20}
+                        height={20}
+                      />
+                    </Link>
+                    <h2 className="text-3xl">Edit contact</h2>
+                  </div>
+                  <Button
+                    label="Save"
+                    style="bg-[var(--orange)] px-4 py-1 rounded-xl text-white flex item-center justify-center text-2xl"
+                  />
                 </div>
-                <Button
-                  label="Save"
-                  style="bg-[var(--orange)] px-4 py-1 rounded-xl text-white flex item-center justify-center text-2xl"
+              </div>
+              <div className="flex flex-col px-9">
+                <InputBox
+                  inputName={"firstName"}
+                  label="Name:"
+                  placeholder="Name"
+                  value={formData.firstName}
+                  setValue={(value) =>
+                    handleChange({
+                      target: { name: "firstName", value },
+                    } as React.ChangeEvent<HTMLInputElement>)
+                  }
+                />
+                <InputBox
+                  inputName={"lastName"}
+                  label="Surname:"
+                  placeholder="Surname"
+                  value={formData.lastName}
+                  setValue={(value) =>
+                    handleChange({
+                      target: { name: "lastName", value },
+                    } as React.ChangeEvent<HTMLInputElement>)
+                  }
+                />
+                <InputBox
+                  inputType="email"
+                  inputName={"email"}
+                  label="Email:"
+                  placeholder="Email"
+                  value={formData.email}
+                  setValue={(value) =>
+                    handleChange({
+                      target: { name: "email", value },
+                    } as React.ChangeEvent<HTMLInputElement>)
+                  }
+                />
+                <InputBox
+                  inputType="tel"
+                  inputName={"phone"}
+                  label="Phone:"
+                  placeholder="Phone Number:"
+                  value={formData.phone}
+                  setValue={(value) =>
+                    handleChange({
+                      target: { name: "phone", value },
+                    } as React.ChangeEvent<HTMLInputElement>)
+                  }
                 />
               </div>
-            </div>
-            <div className="flex flex-col px-9">
-              <InputBox
-                inputName={"firstName"}
-                label="Name:"
-                placeholder="Name"
-                value={formData.firstName}
-                setValue={(value) =>
-                  handleChange({
-                    target: { name: "firstName", value },
-                  } as React.ChangeEvent<HTMLInputElement>)
-                }
-              />
-              <InputBox
-                inputName={"lastName"}
-                label="Surname:"
-                placeholder="Surname"
-                value={formData.lastName}
-                setValue={(value) =>
-                  handleChange({
-                    target: { name: "lastName", value },
-                  } as React.ChangeEvent<HTMLInputElement>)
-                }
-              />
-              <InputBox
-                inputType="email"
-                inputName={"email"}
-                label="Email:"
-                placeholder="Email"
-                value={formData.email}
-                setValue={(value) =>
-                  handleChange({
-                    target: { name: "email", value },
-                  } as React.ChangeEvent<HTMLInputElement>)
-                }
-              />
-              <InputBox
-                inputType="tel"
-                inputName={"phone"}
-                label="Phone:"
-                placeholder="Phone Number:"
-                value={formData.phone}
-                setValue={(value) =>
-                  handleChange({
-                    target: { name: "phone", value },
-                  } as React.ChangeEvent<HTMLInputElement>)
-                }
+            </form>
+            <div className="flex items-center justify-center">
+              <Button
+                action={handleDelete}
+                label="Delete"
+                style="bg-[var(--orange)] px-4 py-1 rounded-xl text-white flex item-center justify-center text-2xl"
               />
             </div>
-          </form>
+          </>
         )
       )}
     </section>

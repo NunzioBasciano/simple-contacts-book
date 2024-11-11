@@ -6,12 +6,13 @@ interface IButtonProps {
   image?: string;
   imageAlt?: string;
   style?: string;
+  action?: () => void;
 }
 
 function Button(props: IButtonProps) {
-  const { label, image, imageAlt, style } = props;
+  const { label, image, imageAlt, style, action } = props;
   return (
-    <button className={style}>
+    <button onClick={action} className={style}>
       {image && imageAlt && (
         <Image src={image} alt={imageAlt} width={20} height={20} />
       )}

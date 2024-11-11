@@ -24,18 +24,22 @@ function AddContact() {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       const savedContact = await saveContact(formData);
+      console.log(savedContact);
       setMessage("Contatto salvato con successo!");
       setFormData({ firstName: "", lastName: "", phone: "", email: "" });
     } catch (error) {
       setMessage("Errore durante il salvataggio del contatto.");
+      console.log(error);
     }
   };
 
   return (
     <section>
       {message && <p>{message}</p>}
+
       <form onSubmit={handleSubmit}>
         {/* Section close image, add contact, save button */}
         <div className="my-3">
