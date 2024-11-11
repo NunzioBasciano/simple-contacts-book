@@ -15,7 +15,6 @@ export const saveContact = async (body: IContact) => {
         }
 
         const data = await res.json();
-        console.log("Contatto salvato:", data);
         return data;
     } catch (error) {
         console.error("Errore durante il salvataggio del contatto:", error);

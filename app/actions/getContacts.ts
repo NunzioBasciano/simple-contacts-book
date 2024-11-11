@@ -1,6 +1,6 @@
 import { IContact } from "../(models)/contacts";
 
-export const fetchData = async (): Promise<{ contacts: IContact[] }> => {
+export const getContacts = async (): Promise<{ contacts: IContact[] }> => {
     try {
       const res = await fetch(`/api/contacts`, {
         cache: "no-cache",

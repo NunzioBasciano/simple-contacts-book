@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { letters } from "../data/letters";
 import Link from "next/link";
 import { IContact } from "../(models)/contacts";
-import { fetchData } from "../actions/contacts";
+import { getContacts } from "../actions/getContacts";
 
 function MainSection() {
   const [contacts, setContacts] = useState<IContact[]>([]);
@@ -14,7 +14,7 @@ function MainSection() {
     const loadData = async () => {
       setLoading(true);
       try {
-        const data = await fetchData();
+        const data = await getContacts();
         setContacts(data.contacts);
         setLoading(false);
       } catch (error: unknown) {
@@ -36,14 +36,16 @@ function MainSection() {
         <>
           <section>
             <ul className="flex flex-col gap-4">
-              {contacts.map((item, index) => (
-                <li className="flex items-center gap-2" key={index}>
-                  <div className="bg-[var(--orange)] p-2 rounded-full w-[30px] h-[30px] flex items-center justify-center">
-                    {(item.lastName && item.lastName[0]) ||
-                      (item.firstName && item.firstName[0])}
-                  </div>
-                  {item.firstName} {item.lastName}
-                </li>
+              {contacts.map((item) => (
+                <Link key={item._id} href={`/contacts/${item._id}`}>
+                  <li className="flex items-center gap-2">
+                    <div className="bg-[var(--orange)] p-2 rounded-full w-[30px] h-[30px] flex items-center justify-center">
+                      {(item.lastName && item.lastName[0]) ||
+                        (item.firstName && item.firstName[0])}
+                    </div>
+                    {item.firstName} {item.lastName}
+                  </li>
+                </Link>
               ))}
             </ul>
           </section>
