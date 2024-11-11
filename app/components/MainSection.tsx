@@ -13,6 +13,8 @@ function MainSection() {
   const [searchQuery, setSearchQuery] = useState<string>(""); // Stato per la query di ricerca
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [sortCriterion, setSortCriterion] = useState<string>("lastName"); // Ordina di default per cognome
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     const loadData = async () => {
@@ -22,6 +24,8 @@ function MainSection() {
         setContacts(data.contacts);
         console.log(data.contacts);
         setFilteredContacts(data.contacts); // All'inizio, mostra tutti i contatti
+        const sortedContacts = handleSort(data.contacts);
+        setFilteredContacts(sortedContacts);
         setLoading(false);
       } catch (error: unknown) {
         if (error instanceof Error) {
@@ -32,6 +36,37 @@ function MainSection() {
 
     loadData();
   }, []);
+
+  // Funzione per gestire l'ordinamento
+  const handleSort = (contacts: IContact[]) => {
+    return contacts.sort((a, b) => {
+      const aValue = a[sortCriterion as keyof IContact];
+      const bValue = b[sortCriterion as keyof IContact];
+
+      if (typeof aValue === "string" && typeof bValue === "string") {
+        return sortOrder === "asc"
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue);
+      }
+      return 0;
+    });
+  };
+
+  const handleSortCriterionChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSortCriterion(event.target.value);
+    const sortedContacts = handleSort(filteredContacts);
+    setFilteredContacts([...sortedContacts]);
+  };
+
+  const handleSortOrderChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSortOrder(event.target.value as "asc" | "desc");
+    const sortedContacts = handleSort(filteredContacts);
+    setFilteredContacts([...sortedContacts]);
+  };
 
   // Funzione per gestire il cambio del campo di ricerca
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -88,14 +123,37 @@ function MainSection() {
       ) : (
         <>
           <section>
-            {/* Barra di ricerca */}
-            <input
-              type="text"
-              placeholder="Search by name, surname, or email"
-              value={searchQuery}
-              onChange={handleSearch}
-              className="mb-4 p-2 border border-gray-300 rounded"
-            />
+            <div className="flex gap-4">
+              {/* Barra di ricerca */}
+              <input
+                type="text"
+                placeholder="Search by name, surname, or email"
+                value={searchQuery}
+                onChange={handleSearch}
+                className="mb-4 p-2 border border-gray-300 rounded"
+              />
+
+              {/* Selezione per criterio di ordinamento */}
+              <select
+                value={sortCriterion}
+                onChange={handleSortCriterionChange}
+                className="mb-4 p-2 border border-gray-300 rounded"
+              >
+                <option value="firstName">Nome</option>
+                <option value="lastName">Cognome</option>
+                <option value="email">Email</option>
+              </select>
+
+              {/* Selezione per ordine crescente o decrescente */}
+              <select
+                value={sortOrder}
+                onChange={handleSortOrderChange}
+                className="mb-4 p-2 border border-gray-300 rounded"
+              >
+                <option value="asc">Ascendente</option>
+                <option value="desc">Discendente</option>
+              </select>
+            </div>
 
             {/* Elenco dei contatti filtrati */}
             <ul className="flex flex-col gap-4">
