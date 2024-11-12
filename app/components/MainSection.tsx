@@ -1,19 +1,22 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { letters } from "../data/letters";
 import Link from "next/link";
 import { IContact } from "../(models)/contacts";
 import { getContacts } from "../actions/getContacts";
 import { updateFavoriteStatus } from "../actions/updateFavoriteStatus";
 import Image from "next/image";
+import InputBox from "./InputBox";
+import SelectBox from "./SelectBox";
+import { optionCriterion } from "../data/optionCriterion";
+import { optionOrder } from "../data/optionOrder";
 
 function MainSection() {
   const [contacts, setContacts] = useState<IContact[]>([]);
-  const [filteredContacts, setFilteredContacts] = useState<IContact[]>([]); // Stato per i contatti filtrati
-  const [searchQuery, setSearchQuery] = useState<string>(""); // Stato per la query di ricerca
+  const [filteredContacts, setFilteredContacts] = useState<IContact[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [sortCriterion, setSortCriterion] = useState<string>("lastName"); // Ordina di default per cognome
+  const [sortCriterion, setSortCriterion] = useState<string>("lastName");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
@@ -22,20 +25,36 @@ function MainSection() {
       try {
         const data = await getContacts();
         setContacts(data.contacts);
-        console.log(data.contacts);
-        setFilteredContacts(data.contacts); // All'inizio, mostra tutti i contatti
         const sortedContacts = handleSort(data.contacts);
         setFilteredContacts(sortedContacts);
-        setLoading(false);
+        /*  setLoading(false); */
       } catch (error: unknown) {
         if (error instanceof Error) {
           setErrorMessage("Failed to load data.");
         }
+      } finally {
+        setLoading(false);
       }
     };
 
     loadData();
-  }, []);
+  }, [sortCriterion, sortOrder]);
+
+  useEffect(() => {
+    handleSearch(searchQuery);
+  }, [searchQuery]);
+
+  // Funzione per gestire il cambio del campo di ricerca
+  const handleSearch = (query: string): void => {
+    setSearchQuery(query); // Imposta `searchQuery`
+
+    const filtered = contacts.filter((contact) =>
+      `${contact.firstName} ${contact.lastName} ${contact.email}`
+        .toLowerCase()
+        .includes(query.toLowerCase())
+    );
+    setFilteredContacts(filtered); // Aggiorna i contatti filtrati
+  };
 
   // Funzione per gestire l'ordinamento
   const handleSort = (contacts: IContact[]) => {
@@ -66,20 +85,6 @@ function MainSection() {
     setSortOrder(event.target.value as "asc" | "desc");
     const sortedContacts = handleSort(filteredContacts);
     setFilteredContacts([...sortedContacts]);
-  };
-
-  // Funzione per gestire il cambio del campo di ricerca
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const query = event.target.value;
-    setSearchQuery(query);
-
-    // Filtra i contatti in base alla query di ricerca
-    const filtered = contacts.filter((contact) =>
-      `${contact.firstName} ${contact.lastName} ${contact.email}`
-        .toLowerCase()
-        .includes(query.toLowerCase())
-    );
-    setFilteredContacts(filtered); // Aggiorna i contatti filtrati
   };
 
   // Funzione per gestire il click sul cuoricino
@@ -123,37 +128,29 @@ function MainSection() {
       ) : (
         <>
           <section>
-            <div className="flex gap-4">
-              {/* Barra di ricerca */}
-              <input
-                type="text"
+            <form className="flex ">
+              <InputBox
+                inputType="text"
                 placeholder="Search by name, surname, or email"
                 value={searchQuery}
-                onChange={handleSearch}
-                className="mb-4 p-2 border border-gray-300 rounded"
+                setValue={setSearchQuery}
+                inputName="search"
               />
-
-              {/* Selezione per criterio di ordinamento */}
-              <select
+              <SelectBox
                 value={sortCriterion}
                 onChange={handleSortCriterionChange}
-                className="mb-4 p-2 border border-gray-300 rounded"
-              >
-                <option value="firstName">Nome</option>
-                <option value="lastName">Cognome</option>
-                <option value="email">Email</option>
-              </select>
-
-              {/* Selezione per ordine crescente o decrescente */}
-              <select
+                id="criteria"
+                className=""
+                options={optionCriterion}
+              />
+              <SelectBox
                 value={sortOrder}
                 onChange={handleSortOrderChange}
-                className="mb-4 p-2 border border-gray-300 rounded"
-              >
-                <option value="asc">Ascendente</option>
-                <option value="desc">Discendente</option>
-              </select>
-            </div>
+                id="order"
+                className=""
+                options={optionOrder}
+              />
+            </form>
 
             {/* Elenco dei contatti filtrati */}
             <ul className="flex flex-col gap-4">
@@ -198,7 +195,7 @@ function MainSection() {
               ))}
             </ul>
           </section>
-          <section>
+          {/*           <section>
             <ul className="flex flex-col justify-center items-center">
               {letters.map((item, index) => (
                 <Link href="/" key={index}>
@@ -206,7 +203,7 @@ function MainSection() {
                 </Link>
               ))}
             </ul>
-          </section>
+          </section> */}
         </>
       )}
     </main>
