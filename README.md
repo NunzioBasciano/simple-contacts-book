@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Simple Contacts Book
 
-## Getting Started
+Simple Contacts Book è un'applicazione web sviluppata con Next.js e TypeScript che consente agli utenti di gestire una rubrica di contatti. È stata progettata per essere semplice e intuitiva, con funzionalità di visualizzazione, aggiunta, modifica e cancellazione di contatti.
 
-First, run the development server:
+## Caratteristiche
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Visualizzazione dei Contatti**: visualizza un elenco di contatti salvati.
+- **Aggiunta di un Nuovo Contatto**: consente agli utenti di aggiungere contatti con informazioni dettagliate.
+- **Modifica e Cancellazione**: possibilità di aggiornare o eliminare contatti esistenti.
+- **Modal di Conferma**: mostra un messaggio di conferma prima della cancellazione di un contatto.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Demo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Puoi provare l'applicazione live su Vercel:
+[Simple Contacts Book - Demo](https://simple-contacts-book.vercel.app/)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tecnologie Utilizzate
 
-## Learn More
+- **Next.js**: framework React per l'applicazione lato server e client.
+- **TypeScript**: linguaggio di programmazione utilizzato per una tipizzazione rigorosa.
+- **MongoDB**: database per la memorizzazione delle informazioni sui contatti.
+- **Tailwind CSS**: utilizzato per una gestione rapida e modulare degli stili.
+- **Vercel**: piattaforma di hosting per il deployment dell'applicazione.
 
-To learn more about Next.js, take a look at the following resources:
+## Struttura del Progetto
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **components/**: contiene i componenti React dell'app, inclusi i pulsanti e le modali.
+- **pages/**: include le pagine Next.js per le route dell'app.
+- **(models)/**: contiene i modelli TypeScript per i dati, come IContact.
+- **api/**: directory per le route API Next.js, per operazioni CRUD sui contatti.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## API Endpoints
 
-## Deploy on Vercel
+- **GET** /api/contacts: ottiene tutti i contatti.
+- **POST** /api/contacts: crea un nuovo contatto.
+- **PUT** /api/contacts/: aggiorna un contatto esistente.
+- **DELETE** /api/contacts/: elimina un contatto.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contributi
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+I contributi sono benvenuti! Sentiti libero di aprire un'issue o una pull request per suggerimenti, bug fix, o nuove funzionalità.
+
+## Licenza
+
+Questo progetto è distribuito sotto la licenza MIT. Consulta il file LICENSE per ulteriori dettagli.
