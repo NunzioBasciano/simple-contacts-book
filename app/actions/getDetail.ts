@@ -1,6 +1,8 @@
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
 export const getDetail = async (id: string) => {
   try {
-    const res = await fetch(`/api/contacts/${id}`, {
+    const res = await fetch(`${apiUrl}/contacts/${id}`, {
       cache: "no-cache",
     });
 
