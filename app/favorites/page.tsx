@@ -17,7 +17,7 @@ function Favorites() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  /* Use custom hook */
+  /* Use custom hook for managing search and sorting */
   const {
     searchQuery,
     setSearchQuery,
@@ -27,16 +27,17 @@ function Favorites() {
     handleSearch,
     handleSortCriterionChange,
     handleSortOrderChange,
-  } = useFiltersAndSorting();
+  } = useFiltersAndSorting(); // Destructure custom hook functions
 
   useEffect(() => {
+    // Function to load data (contacts)
     const loadData = async () => {
       setLoading(true);
       try {
-        const data = await getContacts();
-        setContacts(data.contacts); // Salva tutti i contatti
-        const sortedContacts = handleSort(data.contacts);
-        setFilteredContacts(sortedContacts);
+        const data = await getContacts(); // Fetch the contacts data
+        setContacts(data.contacts); // Set the fetched contacts in state
+        const sortedContacts = handleSort(data.contacts); // Sort the contacts
+        setFilteredContacts(sortedContacts); // Set the sorted contacts in state
       } catch (error: unknown) {
         if (error instanceof Error) {
           setErrorMessage("Failed to load data.");
@@ -46,14 +47,16 @@ function Favorites() {
       }
     };
     loadData();
-  }, [handleSort]);
+  }, [handleSort]); // Dependency array to re-run when handleSort changes
 
-  // Filtra i contatti in base ai preferiti e alla ricerca
   useEffect(() => {
-    const filtered = contacts.filter((contact) => contact.isFavorite); // Filtra solo i preferiti
-    const searchFiltered = handleSearch(searchQuery, filtered); // Applica la ricerca ai preferiti
-    setFilteredContacts(searchFiltered); // Imposta i contatti filtrati
-  }, [contacts, searchQuery, handleSearch]);
+    // Filter the contacts to include only those that are marked as favorites
+    const filtered = contacts.filter((contact) => contact.isFavorite);
+    // Apply the search filter to the favorite contacts
+    const searchFiltered = handleSearch(searchQuery, filtered);
+    // Set the filtered contacts to the state, so they can be displayed
+    setFilteredContacts(searchFiltered);
+  }, [contacts, searchQuery, handleSearch]); // The effect runs whenever contacts, searchQuery, or handleSearch change
 
   return (
     <main className="m-4 flex justify-between">
@@ -67,7 +70,7 @@ function Favorites() {
       ) : (
         <>
           <section className="mx-auto">
-            {/* Search and order section */}
+            {/* Search and sorting form */}
             <form className="flex mb-3 gap-3">
               <InputBox
                 inputType="text"
@@ -92,6 +95,7 @@ function Favorites() {
               />
             </form>
 
+            {/* List of filtered contacts */}
             <ul className="flex flex-col gap-4">
               {filteredContacts.map((item) => (
                 <div
@@ -112,6 +116,7 @@ function Favorites() {
                       </div>
                     </li>
                   </Link>
+                  {/* Button to toggle favorite status */}
                   <Button
                     action={() => {
                       if (item._id && item.isFavorite !== undefined) {

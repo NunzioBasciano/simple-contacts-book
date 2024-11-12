@@ -1,5 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
-
 interface IInputProps {
   type?: string;
   placeholder: string;

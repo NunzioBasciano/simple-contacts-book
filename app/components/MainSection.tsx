@@ -17,7 +17,7 @@ function MainSection() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  /* Use custom hook */
+  /* Use custom hook for managing search and sorting */
   const {
     searchQuery,
     setSearchQuery,
@@ -27,16 +27,17 @@ function MainSection() {
     handleSearch,
     handleSortCriterionChange,
     handleSortOrderChange,
-  } = useFiltersAndSorting();
+  } = useFiltersAndSorting(); // Destructure custom hook functions
 
   useEffect(() => {
+    // Function to load data (contacts)
     const loadData = async () => {
       setLoading(true);
       try {
-        const data = await getContacts();
-        setContacts(data.contacts);
-        const sortedContacts = handleSort(data.contacts);
-        setFilteredContacts(sortedContacts);
+        const data = await getContacts(); // Fetch the contacts data
+        setContacts(data.contacts); // Set the fetched contacts in state
+        const sortedContacts = handleSort(data.contacts); // Sort the contacts
+        setFilteredContacts(sortedContacts); // Set the sorted contacts in state
       } catch (error: unknown) {
         if (error instanceof Error) {
           setErrorMessage("Failed to load data.");
@@ -47,12 +48,13 @@ function MainSection() {
     };
 
     loadData();
-  }, [handleSort]);
+  }, [handleSort]); // Dependency array to re-run when handleSort changes
 
   useEffect(() => {
+    // Filter the contacts based on the search query
     const filtered = handleSearch(searchQuery, contacts);
-    setFilteredContacts(filtered);
-  }, [searchQuery, handleSearch, contacts]);
+    setFilteredContacts(filtered); // Set the filtered contacts in state
+  }, [searchQuery, handleSearch, contacts]); // Re-run when search query or contacts change
 
   return (
     <main className="m-4 flex justify-between">
@@ -66,6 +68,7 @@ function MainSection() {
       ) : (
         <>
           <section className="mx-auto">
+            {/* Search and sorting form */}
             <form className="flex mb-3 gap-3">
               <InputBox
                 inputType="text"
@@ -90,6 +93,7 @@ function MainSection() {
               />
             </form>
 
+            {/* List of filtered contacts */}
             <ul className="flex flex-col gap-4">
               {filteredContacts.map((item) => (
                 <div
@@ -111,6 +115,7 @@ function MainSection() {
                     </li>
                   </Link>
 
+                  {/* Button to toggle favorite status */}
                   <Button
                     action={() => {
                       if (item._id && item.isFavorite !== undefined) {

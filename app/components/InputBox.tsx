@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from "react";
 import Input from "./Input";
 
 interface IInputBox {
