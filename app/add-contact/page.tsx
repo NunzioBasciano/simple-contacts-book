@@ -5,6 +5,8 @@ import Button from "../components/Button";
 import InputBox from "../components/InputBox";
 import Link from "next/link";
 import { saveContact } from "../actions/saveContact";
+import Toast from "../components/Toast"; // Importa il Toast personalizzato
+import { labels } from "../data/label";
 
 function AddContact() {
   const [formData, setFormData] = useState({
@@ -14,7 +16,8 @@ function AddContact() {
     email: "",
     isFavorite: false,
   });
-  const [message, setMessage] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<"success" | "error">("success");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -27,8 +30,9 @@ function AddContact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const savedContact = await saveContact(formData);
-      setMessage("Contatto salvato con successo!");
+      await saveContact(formData);
+      setToastMessage("Contatto salvato con successo!");
+      setToastType("success");
       setFormData({
         firstName: "",
         lastName: "",
@@ -37,38 +41,41 @@ function AddContact() {
         isFavorite: false,
       });
     } catch (error) {
-      setMessage("Errore durante il salvataggio del contatto.");
+      setToastMessage("Errore durante il salvataggio del contatto.");
+      setToastType("error");
       console.log(error);
     }
   };
 
+  const closeToast = () => {
+    setToastMessage(null);
+  };
+
   return (
     <section>
-      {message && <p>{message}</p>}
-
+      {/* Mostra il form per aggiungere un contatto */}
       <form onSubmit={handleSubmit}>
-        {/* Section close image, add contact, save button */}
         <div className="my-3">
           <div className="flex p-3 justify-between">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-6">
               <Link href={"/"}>
                 <Image
                   src="/close.png"
                   alt="close icon"
                   width={20}
                   height={20}
-                  style={{ objectFit: "contain" }} // Use style prop instead
+                  style={{ objectFit: "contain" }}
                 />
               </Link>
-              <h2 className="text-3xl">Add contact</h2>
+              <h2 className="text-3xl">{labels.addContact}</h2>
             </div>
             <Button
               label="Save"
-              style="bg-[var(--orange)] px-4 py-1 rounded-xl text-white flex item-center justify-center text-2zl"
+              style="bg-[var(--orange)] px-4 py-1 rounded-xl text-white flex item-center justify-center text-2xl"
             />
           </div>
         </div>
-        <div className="flex flex-col px-9 gap-3">
+        <div className="flex flex-col px-9 py-3 gap-6">
           <InputBox
             inputName={"firstName"}
             placeholder="Name"
@@ -84,19 +91,24 @@ function AddContact() {
           <InputBox
             inputType="email"
             inputName={"email"}
-            placeholder="email"
+            placeholder="Email"
             value={formData.email}
             onChange={handleChange}
           />
           <InputBox
             inputType="tel"
             inputName={"phone"}
-            placeholder="Phone Number:"
+            placeholder="Phone Number"
             value={formData.phone}
             onChange={handleChange}
           />
         </div>
       </form>
+
+      {/* Condizione per mostrare il Toast */}
+      {toastMessage && (
+        <Toast message={toastMessage} type={toastType} onClose={closeToast} />
+      )}
     </section>
   );
 }

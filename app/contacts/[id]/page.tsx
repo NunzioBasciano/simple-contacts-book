@@ -2,9 +2,12 @@
 import { getDetail } from "@/app/actions/getDetail";
 import Button from "@/app/components/Button";
 import InputBox from "@/app/components/InputBox";
+import { labels } from "@/app/data/label";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import Toast from "@/app/components/Toast"; // Importa il Toast personalizzato
+import Modal from "@/app/components/Modal";
 
 function Contact({
   params: paramsPromise,
@@ -21,19 +24,24 @@ function Contact({
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [id, setId] = useState<string>("");
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Stato per gestire la modale
 
+  // useEffect to fetch contact details and populate the form fields when the component mounts or `id` changes
   useEffect(() => {
     const fetchContact = async () => {
       setLoading(true);
       try {
-        const params = await paramsPromise;
+        const params = await paramsPromise; // Resolve paramsPromise to get the `id`
         const contactId = params.id;
 
         if (id !== contactId) {
+          // Avoid refetching if `id` hasn't changed
           setId(contactId);
-          const fetchedContact = await getDetail(contactId);
+          const fetchedContact = await getDetail(contactId); // Fetch contact details based on `id`
 
-          // Imposta direttamente formData senza usare `contact`
+          // Directly set form data without using a temporary `contact` variable
           setFormData({
             _id: fetchedContact._id,
             firstName: fetchedContact.firstName,
@@ -54,9 +62,9 @@ function Contact({
     };
 
     fetchContact();
-  }, [paramsPromise, id]); // Aggiungi `id` per evitare chiamate inutili
+  }, [paramsPromise, id]);
 
-  // Handle form changes
+  // Handle changes in form input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -65,51 +73,57 @@ function Contact({
     }));
   };
 
+  // Handle form submission (update contact)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Utilizza l'ID del contatto nella URL per la PUT request
       const res = await fetch(`/api/contacts/${formData._id}`, {
-        method: "PUT", // Cambia il metodo a "PUT"
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData), // Invia i dati aggiornati
+        body: JSON.stringify(formData),
       });
 
       if (!res.ok) {
         throw new Error("Error updating contact");
       }
-      const result = await res.json();
-      console.log("Updated contact:", result);
-      // Puoi anche aggiungere una logica per aggiornare la UI o fare un redirect
+      await res.json();
+      setToastMessage("Contact updated successfully!");
+      setToastType("success");
     } catch (error) {
       console.error("Error:", error);
-      setErrorMessage("Error saving contact");
+      setToastMessage("Error updating contact.");
+      setToastType("error");
     }
   };
 
-  // Handle delete contact
   const handleDelete = async () => {
-    if (window.confirm("Are you sure you want to delete this contact?")) {
-      try {
-        const res = await fetch(`/api/contacts/${formData._id}`, {
-          method: "DELETE", // DELETE request to the server
-        });
+    try {
+      const res = await fetch(`/api/contacts/${formData._id}`, {
+        method: "DELETE", // DELETE request to the server
+      });
 
-        if (!res.ok) {
-          throw new Error("Error deleting contact");
-        }
-
-        // If successful, redirect or update UI
-        alert("Contact deleted successfully");
-        // Redirect to home page or other appropriate page
-        window.location.href = "/";
-      } catch (error) {
-        console.error("Error:", error);
-        setErrorMessage("Error deleting contact");
+      if (!res.ok) {
+        throw new Error("Error deleting contact");
       }
+
+      setToastMessage("Contatto salvato con successo!");
+      setToastType("success");
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Error:", error);
+      setToastMessage("Errore durante il salvataggio del contatto.");
+      setToastType("error");
     }
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
 
   return (
@@ -123,16 +137,17 @@ function Contact({
             <form onSubmit={handleSubmit}>
               <div className="my-3">
                 <div className="flex p-3 justify-between">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-6">
                     <Link href={"/"}>
                       <Image
                         src="/close.png"
                         alt="close icon"
                         width={20}
                         height={20}
+                        style={{ objectFit: "contain" }}
                       />
                     </Link>
-                    <h2 className="text-3xl">Edit contact</h2>
+                    <h2 className="text-3xl">{labels.editContact}</h2>
                   </div>
                   <Button
                     label="Save"
@@ -140,58 +155,38 @@ function Contact({
                   />
                 </div>
               </div>
-              <div className="flex flex-col px-9">
+              <div className="flex flex-col px-9 py-3 gap-6">
                 <InputBox
                   inputName={"firstName"}
-                  label="Name:"
                   placeholder="Name"
                   value={formData.firstName}
-                  setValue={(value) =>
-                    handleChange({
-                      target: { name: "firstName", value },
-                    } as React.ChangeEvent<HTMLInputElement>)
-                  }
+                  onChange={handleChange}
                 />
                 <InputBox
                   inputName={"lastName"}
-                  label="Surname:"
                   placeholder="Surname"
                   value={formData.lastName}
-                  setValue={(value) =>
-                    handleChange({
-                      target: { name: "lastName", value },
-                    } as React.ChangeEvent<HTMLInputElement>)
-                  }
+                  onChange={handleChange}
                 />
                 <InputBox
                   inputType="email"
                   inputName={"email"}
-                  label="Email:"
                   placeholder="Email"
                   value={formData.email}
-                  setValue={(value) =>
-                    handleChange({
-                      target: { name: "email", value },
-                    } as React.ChangeEvent<HTMLInputElement>)
-                  }
+                  onChange={handleChange}
                 />
                 <InputBox
                   inputType="tel"
                   inputName={"phone"}
-                  label="Phone:"
                   placeholder="Phone Number:"
                   value={formData.phone}
-                  setValue={(value) =>
-                    handleChange({
-                      target: { name: "phone", value },
-                    } as React.ChangeEvent<HTMLInputElement>)
-                  }
+                  onChange={handleChange}
                 />
               </div>
             </form>
             <div className="flex items-center justify-center">
               <Button
-                action={handleDelete}
+                action={openModal}
                 label="Delete"
                 style="bg-[var(--orange)] px-4 py-1 rounded-xl text-white flex item-center justify-center text-2xl"
               />
@@ -199,6 +194,19 @@ function Contact({
           </>
         )
       )}
+      {toastMessage && (
+        <Toast
+          message={toastMessage}
+          type={toastType}
+          onClose={() => setToastMessage(null)}
+        />
+      )}
+
+      <Modal
+        isModalOpen={isModalOpen}
+        closeModal={closeModal}
+        handleDelete={handleDelete}
+      />
     </section>
   );
 }
