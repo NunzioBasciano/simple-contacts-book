@@ -1,131 +1,136 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { letters } from "../data/letters";
 import Link from "next/link";
 import { IContact } from "../(models)/contacts";
 import { getContacts } from "../actions/getContacts";
-import { updateFavoriteStatus } from "../actions/updateFavoriteStatus";
-import Image from "next/image";
+import InputBox from "../components/InputBox";
+import SelectBox from "../components/SelectBox";
+import { useFiltersAndSorting } from "../data/filter";
+import { optionCriterion } from "../data/optionCriterion";
+import { optionOrder } from "../data/optionOrder";
+import { handleFavoriteToggle } from "../data/favoriteUtils";
+import Button from "../components/Button";
 
 function Favorites() {
   const [contacts, setContacts] = useState<IContact[]>([]);
   const [filteredContacts, setFilteredContacts] = useState<IContact[]>([]); // Stato per i contatti filtrati
-  const [searchQuery, setSearchQuery] = useState<string>(""); // Stato per la query di ricerca
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // Funzione per ricaricare i contatti
-  const loadData = async () => {
-    setLoading(true);
-    try {
-      const data = await getContacts();
-      const favoriteContacts = data.contacts.filter(
-        (contact) => contact.isFavorite
-      ); // Filtra solo i preferiti
-      setContacts(data.contacts);
-      setFilteredContacts(favoriteContacts); // Mostra solo i contatti preferiti
-      setLoading(false);
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setErrorMessage("Failed to load data.");
-      }
-    }
-  };
+  /* Use custom hook */
+  const {
+    searchQuery,
+    setSearchQuery,
+    sortCriterion,
+    sortOrder,
+    handleSort,
+    handleSearch,
+    handleSortCriterionChange,
+    handleSortOrderChange,
+  } = useFiltersAndSorting();
 
   useEffect(() => {
-    loadData(); // Carica i contatti quando il componente è montato
-  }, []);
+    const loadData = async () => {
+      setLoading(true);
+      try {
+        const data = await getContacts();
+        setContacts(data.contacts); // Salva tutti i contatti
+        const sortedContacts = handleSort(data.contacts);
+        setFilteredContacts(sortedContacts);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          setErrorMessage("Failed to load data.");
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, [handleSort]);
 
-  // Funzione per gestire il cambio del campo di ricerca
-  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const query = event.target.value;
-    setSearchQuery(query);
-
-    // Filtra i contatti in base alla query di ricerca
-    const filtered = contacts.filter((contact) =>
-      `${contact.firstName} ${contact.lastName} ${contact.email}`
-        .toLowerCase()
-        .includes(query.toLowerCase())
-    );
-    setFilteredContacts(filtered); // Aggiorna i contatti filtrati
-  };
-
-  // Funzione per gestire il click sul cuoricino
-  const handleFavoriteToggle = async (
-    contactId: string,
-    currentFavoriteStatus: boolean
-  ) => {
-    try {
-      // Invia una richiesta PUT per aggiornare il valore di isFavorite
-      const updatedContact = await updateFavoriteStatus(
-        contactId,
-        !currentFavoriteStatus
-      );
-      console.log(updatedContact);
-
-      // Aggiorna il contatto nella lista dei contatti
-      setContacts((prevContacts) =>
-        prevContacts.map((contact) =>
-          contact._id === contactId
-            ? { ...contact, isFavorite: !currentFavoriteStatus } // Cambia lo stato di isFavorite
-            : contact
-        )
-      );
-
-      // Dopo aver aggiornato lo stato, ricarica i dati
-      loadData(); // Ricarica i contatti preferiti
-    } catch (error) {
-      console.error("Failed to update favorite status:", error);
-    }
-  };
+  // Filtra i contatti in base ai preferiti e alla ricerca
+  useEffect(() => {
+    const filtered = contacts.filter((contact) => contact.isFavorite); // Filtra solo i preferiti
+    const searchFiltered = handleSearch(searchQuery, filtered); // Applica la ricerca ai preferiti
+    setFilteredContacts(searchFiltered); // Imposta i contatti filtrati
+  }, [contacts, searchQuery, handleSearch]);
 
   return (
     <main className="m-4 flex justify-between">
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       {loading ? (
         <p>Loading...</p>
+      ) : filteredContacts.length === 0 && !loading ? (
+        <p className="text-center text-white">
+          Add your first favorite contacts to get started!
+        </p>
       ) : (
         <>
-          <section>
-            {/* Elenco dei contatti filtrati */}
+          <section className="mx-auto">
+            {/* Search and order section */}
+            <form className="flex mb-3 gap-3">
+              <InputBox
+                inputType="text"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                inputName="search"
+              />
+              <SelectBox
+                value={sortCriterion}
+                onChange={handleSortCriterionChange}
+                id="criteria"
+                className="bg-[var(--darkBlue)]  px-1 w-full border border-1 rounded-md text-white"
+                options={optionCriterion}
+              />
+              <SelectBox
+                value={sortOrder}
+                onChange={handleSortOrderChange}
+                id="order"
+                className="bg-[var(--darkBlue)] px-1 w-full border border-1 rounded-md text-white"
+                options={optionOrder}
+              />
+            </form>
+
             <ul className="flex flex-col gap-4">
               {filteredContacts.map((item) => (
-                <div className="flex justify-between" key={item._id}>
+                <div
+                  className="flex items-center justify-between"
+                  key={item._id}
+                >
                   <Link href={`/contacts/${item._id}`}>
                     <li className="flex items-center gap-2">
                       <div className="bg-[var(--orange)] p-2 rounded-full w-[30px] h-[30px] flex items-center justify-center">
                         {(item.lastName && item.lastName[0]) ||
                           (item.firstName && item.firstName[0])}
                       </div>
-                      {item.firstName} {item.lastName} {item.email}
+                      <div>
+                        <div>
+                          {item.firstName} {item.lastName}
+                        </div>
+                        <div>{item.email}</div>
+                      </div>
                     </li>
                   </Link>
-                  <button
-                    onClick={() => {
+                  <Button
+                    action={() => {
                       if (item._id && item.isFavorite !== undefined) {
-                        handleFavoriteToggle(item._id, item.isFavorite);
+                        handleFavoriteToggle(
+                          item._id,
+                          item.isFavorite,
+                          setContacts,
+                          setFilteredContacts
+                        );
                       } else {
                         console.error("Contatto senza ID valido.");
                       }
                     }}
-                    className="ml-4"
-                  >
-                    {item.isFavorite ? (
-                      <Image
-                        src="/heart-full.png"
-                        alt="full heart"
-                        width={20}
-                        height={20}
-                      />
-                    ) : (
-                      <Image
-                        src="/heart-empty.png"
-                        alt="empty heart"
-                        width={20}
-                        height={20}
-                      />
-                    )}
-                  </button>
+                    image={
+                      item.isFavorite ? "/heart-full.png" : "/heart-empty.png"
+                    }
+                    imageAlt={item.isFavorite ? "full heart" : "empty heart"}
+                    style="flex item-center justify-center w-[30px] h-[30px]"
+                  />
                 </div>
               ))}
             </ul>
