@@ -9,6 +9,7 @@ import InputBox from "./InputBox";
 import SelectBox from "./SelectBox";
 import { optionCriterion } from "../data/optionCriterion";
 import { optionOrder } from "../data/optionOrder";
+import Button from "./Button";
 
 function MainSection() {
   const [contacts, setContacts] = useState<IContact[]>([]);
@@ -27,7 +28,6 @@ function MainSection() {
         setContacts(data.contacts);
         const sortedContacts = handleSort(data.contacts);
         setFilteredContacts(sortedContacts);
-        /*  setLoading(false); */
       } catch (error: unknown) {
         if (error instanceof Error) {
           setErrorMessage("Failed to load data.");
@@ -165,45 +165,24 @@ function MainSection() {
                       {item.firstName} {item.lastName} {item.email}
                     </li>
                   </Link>
-                  <button
-                    onClick={() => {
+                  <Button
+                    action={() => {
                       if (item._id && item.isFavorite !== undefined) {
                         handleFavoriteToggle(item._id, item.isFavorite);
                       } else {
                         console.error("Contatto senza ID valido.");
                       }
                     }}
-                    className="ml-4"
-                  >
-                    {item.isFavorite ? (
-                      <Image
-                        src="/heart-full.png"
-                        alt="full heart"
-                        width={20}
-                        height={20}
-                      />
-                    ) : (
-                      <Image
-                        src="/heart-empty.png"
-                        alt="empty heart"
-                        width={20}
-                        height={20}
-                      />
-                    )}
-                  </button>
+                    image={
+                      item.isFavorite ? "/heart-full.png" : "/heart-empty.png"
+                    }
+                    imageAlt={item.isFavorite ? "full heart" : "empty heart"}
+                    style="ml-4"
+                  />
                 </div>
               ))}
             </ul>
           </section>
-          {/*           <section>
-            <ul className="flex flex-col justify-center items-center">
-              {letters.map((item, index) => (
-                <Link href="/" key={index}>
-                  <li>{item}</li>
-                </Link>
-              ))}
-            </ul>
-          </section> */}
         </>
       )}
     </main>

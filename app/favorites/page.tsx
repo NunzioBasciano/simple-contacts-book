@@ -130,15 +130,6 @@ function Favorites() {
               ))}
             </ul>
           </section>
-          <section>
-            <ul className="flex flex-col justify-center items-center">
-              {letters.map((item, index) => (
-                <Link href="/" key={index}>
-                  <li>{item}</li>
-                </Link>
-              ))}
-            </ul>
-          </section>
         </>
       )}
     </main>
