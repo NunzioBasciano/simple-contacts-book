@@ -153,6 +153,10 @@ function MainSection() {
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       {loading ? (
         <p>Loading...</p>
+      ) : contacts.length === 0 && !loading ? ( // Controlla se ci sono contatti e se il caricamento è terminato
+        <p className="text-center text-white">
+          Add your first contacts to get started!
+        </p>
       ) : (
         <>
           <section className="mx-auto">
