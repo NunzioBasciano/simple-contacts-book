@@ -108,12 +108,17 @@ function Contact({
         throw new Error("Error deleting contact");
       }
 
-      setToastMessage("Contatto salvato con successo!");
+      // Aggiorniamo il messaggio del toast a "Success Delete"
+      setToastMessage("Contact deleted successfully!");
       setToastType("success");
-      window.location.href = "/";
+
+      // Dopo un breve delay, reindirizziamo alla Home
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 2000); // Ritardo di 2 secondi per mostrare il messaggio del toast
     } catch (error) {
       console.error("Error:", error);
-      setToastMessage("Errore durante il salvataggio del contatto.");
+      setToastMessage("Error deleting contact.");
       setToastType("error");
     }
   };

@@ -10,6 +10,7 @@ import { optionCriterion } from "../data/optionCriterion";
 import { optionOrder } from "../data/optionOrder";
 import { handleFavoriteToggle } from "../data/favoriteUtils";
 import Button from "../components/Button";
+import { labels } from "../data/label";
 
 function Favorites() {
   const [contacts, setContacts] = useState<IContact[]>([]);
@@ -96,7 +97,7 @@ function Favorites() {
             {contacts.filter((contact) => contact.isFavorite).length === 0 &&
               filteredContacts.length === 0 && (
                 <p className="text-center text-white">
-                  Add your first favorite contacts to get started!
+                  {labels.addFirstFavoriteContact}
                 </p>
               )}
             {/* List of filtered contacts */}
