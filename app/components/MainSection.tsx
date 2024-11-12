@@ -1,10 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { IContact } from "../(models)/contacts";
 import { getContacts } from "../actions/getContacts";
 import { updateFavoriteStatus } from "../actions/updateFavoriteStatus";
-import Image from "next/image";
 import InputBox from "./InputBox";
 import SelectBox from "./SelectBox";
 import { optionCriterion } from "../data/optionCriterion";
@@ -20,7 +19,51 @@ function MainSection() {
   const [sortCriterion, setSortCriterion] = useState<string>("lastName");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
+  /**
+   * Sorts the contacts based on the selected criterion and order.
+   * @param {IContact[]} contacts - The list of contacts to be sorted.
+   * @returns {IContact[]} - The sorted list of contacts.
+   */
+  const handleSort = useCallback(
+    (contacts: IContact[]) => {
+      return contacts.sort((a, b) => {
+        const aValue = a[sortCriterion as keyof IContact];
+        const bValue = b[sortCriterion as keyof IContact];
+
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          return sortOrder === "asc"
+            ? aValue.localeCompare(bValue)
+            : bValue.localeCompare(aValue);
+        }
+        return 0;
+      });
+    },
+    [sortCriterion, sortOrder]
+  );
+
+  /**
+   * Filters contacts based on the search query.
+   * @param {string} query - The search query entered by the user.
+   */
+  const handleSearch = useCallback(
+    (query: string): void => {
+      setSearchQuery(query);
+
+      const filtered = contacts.filter((contact) =>
+        `${contact.firstName} ${contact.lastName} ${contact.email}`
+          .toLowerCase()
+          .includes(query.toLowerCase())
+      );
+      setFilteredContacts(filtered);
+    },
+    [contacts]
+  );
+
   useEffect(() => {
+    /**
+     * Loads contacts data from the API, sorts it based on current criteria,
+     * and updates the state with sorted contacts.
+     */
     const loadData = async () => {
       setLoading(true);
       try {
@@ -38,39 +81,16 @@ function MainSection() {
     };
 
     loadData();
-  }, [sortCriterion, sortOrder]);
+  }, [handleSort]);
 
   useEffect(() => {
     handleSearch(searchQuery);
-  }, [searchQuery]);
+  }, [searchQuery, handleSearch]);
 
-  // Funzione per gestire il cambio del campo di ricerca
-  const handleSearch = (query: string): void => {
-    setSearchQuery(query); // Imposta `searchQuery`
-
-    const filtered = contacts.filter((contact) =>
-      `${contact.firstName} ${contact.lastName} ${contact.email}`
-        .toLowerCase()
-        .includes(query.toLowerCase())
-    );
-    setFilteredContacts(filtered); // Aggiorna i contatti filtrati
-  };
-
-  // Funzione per gestire l'ordinamento
-  const handleSort = (contacts: IContact[]) => {
-    return contacts.sort((a, b) => {
-      const aValue = a[sortCriterion as keyof IContact];
-      const bValue = b[sortCriterion as keyof IContact];
-
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        return sortOrder === "asc"
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
-      }
-      return 0;
-    });
-  };
-
+  /**
+   * Updates the sorting criterion and applies the sorting to filtered contacts.
+   * @param {React.ChangeEvent<HTMLSelectElement>} event - The event triggered by changing the criterion selection.
+   */
   const handleSortCriterionChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -79,6 +99,10 @@ function MainSection() {
     setFilteredContacts([...sortedContacts]);
   };
 
+  /**
+   * Updates the sorting order and applies the sorting to filtered contacts.
+   * @param {React.ChangeEvent<HTMLSelectElement>} event - The event triggered by changing the sort order.
+   */
   const handleSortOrderChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
@@ -87,20 +111,24 @@ function MainSection() {
     setFilteredContacts([...sortedContacts]);
   };
 
-  // Funzione per gestire il click sul cuoricino
+  /**
+   * Toggles the favorite status of a contact.
+   * @param {string} contactId - The ID of the contact whose favorite status is being updated.
+   * @param {boolean} currentFavoriteStatus - The current favorite status of the contact.
+   */
   const handleFavoriteToggle = async (
     contactId: string,
     currentFavoriteStatus: boolean
   ) => {
     try {
-      // Invia una richiesta PUT per aggiornare il valore di isFavorite
+      // Sends a PUT request to update the favorite status of the contact
       const updatedContact = await updateFavoriteStatus(
         contactId,
         !currentFavoriteStatus
       );
       console.log(updatedContact);
 
-      // Aggiorna il contatto nella lista dei contatti
+      // Updates the favorite status in both contacts and filteredContacts states
       setContacts((prevContacts) =>
         prevContacts.map((contact) =>
           contact._id === contactId
@@ -128,6 +156,7 @@ function MainSection() {
       ) : (
         <>
           <section className="mx-auto">
+            {/* Search and order section */}
             <form className="flex mb-3 gap-3">
               <InputBox
                 inputType="text"
@@ -152,7 +181,7 @@ function MainSection() {
               />
             </form>
 
-            {/* Elenco dei contatti filtrati */}
+            {/* Filtered contacts */}
             <ul className="flex flex-col gap-4">
               {filteredContacts.map((item) => (
                 <div className="flex justify-between" key={item._id}>
@@ -165,6 +194,8 @@ function MainSection() {
                       {item.firstName} {item.lastName} {item.email}
                     </li>
                   </Link>
+
+                  {/* Button for handleFavoriteToggle */}
                   <Button
                     action={() => {
                       if (item._id && item.isFavorite !== undefined) {

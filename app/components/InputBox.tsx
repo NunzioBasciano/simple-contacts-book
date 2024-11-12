@@ -12,10 +12,10 @@ interface IInputBox {
 function InputBox(props: IInputBox) {
   const { placeholder, setValue, value, inputType, inputName } = props;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  /*   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     setValue(file ? file.name : ""); // Imposta il nome del file selezionato
-  };
+  }; */
 
   return (
     <>
