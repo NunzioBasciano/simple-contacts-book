@@ -1,8 +1,11 @@
 import { IContact } from "../(models)/contacts";
 
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+
 export const saveContact = async (body: IContact) => {
     try {
-        const res = await fetch('/api/contacts', {
+        const res = await fetch(`${apiUrl}/contacts`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

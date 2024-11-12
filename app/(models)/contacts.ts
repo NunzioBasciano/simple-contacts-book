@@ -6,6 +6,7 @@ export interface IContact {
     lastName?: string;
     phone?: string;
     email?: string;
+    isFavorite?: boolean; 
     
   }
 
@@ -17,6 +18,7 @@ const contactSchema = new Schema({
     lastName: { type: String }, 
     phone: { type: String }, 
     email: { type: String }, 
+    isFavorite: { type: Boolean }, 
 });
 
 const Contact = mongoose.models.Contact || mongoose.model("Contact", contactSchema);
