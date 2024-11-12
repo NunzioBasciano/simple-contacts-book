@@ -127,11 +127,11 @@ function MainSection() {
         <p>Loading...</p>
       ) : (
         <>
-          <section>
-            <form className="flex ">
+          <section className="mx-auto">
+            <form className="flex mb-3 gap-3">
               <InputBox
                 inputType="text"
-                placeholder="Search by name, surname, or email"
+                placeholder="Search"
                 value={searchQuery}
                 setValue={setSearchQuery}
                 inputName="search"
@@ -140,14 +140,14 @@ function MainSection() {
                 value={sortCriterion}
                 onChange={handleSortCriterionChange}
                 id="criteria"
-                className=""
+                className="bg-[var(--darkBlue)]  px-1 w-full border border-1 rounded-md text-white"
                 options={optionCriterion}
               />
               <SelectBox
                 value={sortOrder}
                 onChange={handleSortOrderChange}
                 id="order"
-                className=""
+                className="bg-[var(--darkBlue)] px-1 w-full border border-1 rounded-md text-white"
                 options={optionOrder}
               />
             </form>

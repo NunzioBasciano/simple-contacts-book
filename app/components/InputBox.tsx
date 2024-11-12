@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction } from "react";
 import Input from "./Input";
 
 interface IInputBox {
-  label?: string;
   placeholder: string;
   setValue: Dispatch<SetStateAction<string>>;
   value: string;
@@ -11,7 +10,7 @@ interface IInputBox {
 }
 
 function InputBox(props: IInputBox) {
-  const { label, placeholder, setValue, value, inputType, inputName } = props;
+  const { placeholder, setValue, value, inputType, inputName } = props;
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;

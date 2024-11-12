@@ -15,7 +15,7 @@ function Input(props: IInputProps) {
     <input
       onChange={(e) => setValue(e.target.value)}
       value={value}
-      className="bg-[var(--darkBlue)] py-4 px-3 w-full border border-1 rounded-md text-white"
+      className="bg-[var(--darkBlue)] py-1 px-3 w-full border border-1 rounded-md text-white"
       type={type}
       placeholder={placeholder}
       name={name}
