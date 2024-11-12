@@ -3,14 +3,14 @@ import Input from "./Input";
 
 interface IInputBox {
   placeholder: string;
-  setValue: Dispatch<SetStateAction<string>>;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   value: string;
   inputType?: "text" | "email" | "tel" | "textarea" | "file";
   inputName?: string;
 }
 
 function InputBox(props: IInputBox) {
-  const { placeholder, setValue, value, inputType, inputName } = props;
+  const { placeholder, onChange, value, inputType, inputName } = props;
 
   /*   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
@@ -53,7 +53,7 @@ function InputBox(props: IInputBox) {
         type={inputType}
         placeholder={placeholder}
         value={value}
-        setValue={setValue}
+        onChange={onChange}
       />
     </>
   );

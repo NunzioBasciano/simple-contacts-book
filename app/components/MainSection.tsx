@@ -166,7 +166,7 @@ function MainSection() {
                 inputType="text"
                 placeholder="Search"
                 value={searchQuery}
-                setValue={setSearchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 inputName="search"
               />
               <SelectBox
@@ -188,14 +188,24 @@ function MainSection() {
             {/* Filtered contacts */}
             <ul className="flex flex-col gap-4">
               {filteredContacts.map((item) => (
-                <div className="flex justify-between" key={item._id}>
+                <div
+                  className="flex items-center justify-between"
+                  key={item._id}
+                >
                   <Link href={`/contacts/${item._id}`}>
                     <li className="flex items-center gap-2">
+                      {/* Initial container */}
                       <div className="bg-[var(--orange)] p-2 rounded-full w-[30px] h-[30px] flex items-center justify-center">
                         {(item.lastName && item.lastName[0]) ||
                           (item.firstName && item.firstName[0])}
                       </div>
-                      {item.firstName} {item.lastName} {item.email}
+                      {/* Name, Surname, email container */}
+                      <div>
+                        <div>
+                          {item.firstName} {item.lastName}
+                        </div>
+                        <div>{item.email}</div>
+                      </div>
                     </li>
                   </Link>
 
@@ -212,7 +222,7 @@ function MainSection() {
                       item.isFavorite ? "/heart-full.png" : "/heart-empty.png"
                     }
                     imageAlt={item.isFavorite ? "full heart" : "empty heart"}
-                    style="ml-4"
+                    style="flex item-center justify-center w-[30px] h-[30px]"
                   />
                 </div>
               ))}

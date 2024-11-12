@@ -28,7 +28,6 @@ function AddContact() {
     e.preventDefault();
     try {
       const savedContact = await saveContact(formData);
-      console.log(savedContact);
       setMessage("Contatto salvato con successo!");
       setFormData({
         firstName: "",
@@ -55,10 +54,10 @@ function AddContact() {
               <Link href={"/"}>
                 <Image
                   src="/close.png"
-                  alt="close icon "
+                  alt="close icon"
                   width={20}
                   height={20}
-                  objectFit="cover"
+                  style={{ objectFit: "contain" }} // Use style prop instead
                 />
               </Link>
               <h2 className="text-3xl">Add contact</h2>
@@ -69,52 +68,32 @@ function AddContact() {
             />
           </div>
         </div>
-        <div className="flex flex-col px-9">
+        <div className="flex flex-col px-9 gap-3">
           <InputBox
             inputName={"firstName"}
-            label="Name:"
             placeholder="Name"
             value={formData.firstName}
-            setValue={(value) =>
-              handleChange({
-                target: { name: "firstName", value },
-              } as React.ChangeEvent<HTMLInputElement>)
-            }
+            onChange={handleChange}
           />
           <InputBox
             inputName={"lastName"}
-            label="Surname:"
             placeholder="Surname"
             value={formData.lastName}
-            setValue={(value) =>
-              handleChange({
-                target: { name: "lastName", value },
-              } as React.ChangeEvent<HTMLInputElement>)
-            }
+            onChange={handleChange}
           />
           <InputBox
             inputType="email"
             inputName={"email"}
-            label="email:"
             placeholder="email"
             value={formData.email}
-            setValue={(value) =>
-              handleChange({
-                target: { name: "email", value },
-              } as React.ChangeEvent<HTMLInputElement>)
-            }
+            onChange={handleChange}
           />
           <InputBox
             inputType="tel"
             inputName={"phone"}
-            label="phone"
             placeholder="Phone Number:"
             value={formData.phone}
-            setValue={(value) =>
-              handleChange({
-                target: { name: "phone", value },
-              } as React.ChangeEvent<HTMLInputElement>)
-            }
+            onChange={handleChange}
           />
         </div>
       </form>
