@@ -2,34 +2,35 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 export const getDetail = async (id: string) => {
   try {
+    // Make a GET request to fetch the contact details by ID
     const res = await fetch(`${apiUrl}/contacts/${id}`, {
-      cache: "no-cache",
+      cache: "no-cache", // Disable caching to get the latest data
     });
 
-    // Verifica se la risposta è andata a buon fine
+    // Check if the response is successful
     if (!res.ok) {
       throw new Error(
-        `Errore nella richiesta: ${res.status} ${res.statusText}`
+        `Request failed: ${res.status} ${res.statusText}`
       );
     }
 
-    // Parso i dati in JSON
+    // Parse the response data as JSON
     const data = await res.json();
 
-    // Controllo se l'oggetto `contact` è presente nella risposta
+    // Check if the contact data is present in the response
     if (!data.contact) {
-      throw new Error("Dati del contatto non trovati nella risposta");
+      throw new Error("Contact data not found in the response");
     }
 
-    return data.contact;
+    return data.contact; // Return the contact data
   } catch (error) {
-    // Gestione dell'errore in base al tipo
+    // Error handling based on the type of error
     if (error instanceof Error) {
-      console.error("Errore durante il fetch dei dati:", error.message);
-      throw new Error(error.message || "Errore sconosciuto durante il fetch dei dati");
+      console.error("Error fetching data:", error.message);
+      throw new Error(error.message || "Unknown error occurred while fetching data");
     } else {
-      console.error("Errore sconosciuto durante il fetch dei dati");
-      throw new Error("Errore sconosciuto durante il fetch dei dati");
+      console.error("Unknown error occurred while fetching data");
+      throw new Error("Unknown error occurred while fetching data");
     }
   }
 };
