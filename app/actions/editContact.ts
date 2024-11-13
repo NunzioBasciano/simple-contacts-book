@@ -2,17 +2,15 @@ import { IContact } from "../(models)/contacts";
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-
-export const saveContact = async (body: IContact) => {
+export const editContact = async (body: IContact) => {
     try {
-        const res = await fetch(`${apiUrl}/contacts`, {
-            method: 'POST',
+        const res = await fetch(`${apiUrl}/contacts/${body._id}`, {
+            method: "PATCH",
             headers: {
-                'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
             body: JSON.stringify(body),
-        });
-
+        })
         if (!res.ok) {
             throw new Error(`Errore HTTP! status: ${res.status}`);
         }
@@ -23,4 +21,4 @@ export const saveContact = async (body: IContact) => {
         console.error("Error saving contact:", error);
         throw error;
     }
-};
+}
