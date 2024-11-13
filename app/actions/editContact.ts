@@ -5,7 +5,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 export const editContact = async (body: IContact) => {
     try {
         const res = await fetch(`${apiUrl}/contacts/${body._id}`, {
-            method: "PATCH",
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },
