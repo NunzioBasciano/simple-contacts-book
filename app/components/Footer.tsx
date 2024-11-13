@@ -12,7 +12,7 @@ function Footer() {
   }, [pathname]);
 
   return (
-    <footer className="bg-[var(--blue)] p-3 fixed bottom-0 left-0 right-0">
+    <footer className="bg-[var(--blue)] p-3 2xl:px-96">
       <nav>
         <MenuLink path={path}></MenuLink>
       </nav>
