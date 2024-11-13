@@ -9,6 +9,8 @@ import Toast from "../components/Toast";
 import { labels } from "../data/label";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css"; // Import the PhoneInput CSS
+import { IContact } from "../(models)/contacts";
+import { getContacts } from "../actions/getContacts";
 
 function AddContact() {
   const [formData, setFormData] = useState({
@@ -24,6 +26,8 @@ function AddContact() {
   // State for validation status of phone number and name
   const [validPhone, setValidPhone] = useState(true);
   const [validName, setValidName] = useState(true);
+
+  const [contacts, setContacts] = useState<IContact[]>([]);
 
   const isFormValid =
     formData.firstName.length > 3 && formData.phone.length > 10;
@@ -86,12 +90,38 @@ function AddContact() {
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validPhone && !validName) {
-      return; // Do not submit the form if phone or name is invalid
+
+    // Controlla se il numero di telefono esiste già
+    const phoneExists = contacts.some(
+      (contact) => contact.phone === formData.phone
+    );
+
+    // Controlla se nome e cognome esistono già
+    const nameExists = contacts.some(
+      (contact) =>
+        contact.firstName === formData.firstName &&
+        contact.lastName === formData.lastName
+    );
+
+    if (phoneExists) {
+      setToastMessage("Numero esistente!"); // Mostra toast per numero duplicato
+      setToastType("error");
+      return;
     }
+
+    if (nameExists) {
+      setToastMessage("Il contatto esiste già!"); // Mostra toast per contatto duplicato
+      setToastType("error");
+      return;
+    }
+
+    if (!validPhone || !validName) {
+      return; // Non inviare il form se i dati non sono validi
+    }
+
     try {
       await saveContact(formData);
-      setToastMessage("Contact saved successfully!"); // Success message
+      setToastMessage("Contatto salvato con successo!");
       setToastType("success");
       setFormData({
         firstName: "",
@@ -110,6 +140,20 @@ function AddContact() {
   const closeToast = () => {
     setToastMessage(null);
   };
+
+  useEffect(() => {
+    // Function to load data (contacts)
+    const loadData = async () => {
+      try {
+        const data = await getContacts(); // Fetch the contacts data
+        setContacts(data.contacts); // Set the fetched contacts in state
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+        }
+      }
+    };
+    loadData();
+  }, []);
 
   return (
     <main>
