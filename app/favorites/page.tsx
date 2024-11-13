@@ -60,13 +60,13 @@ function Favorites() {
   }, [contacts, searchQuery, handleSearch]); // The effect runs whenever contacts, searchQuery, or handleSearch change
 
   return (
-    <main className="m-4 flex justify-between">
+    <main className="">
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       {loading ? (
         <p>Loading...</p>
       ) : (
         <div className="mx-auto">
-          <section className="mx-auto">
+          <section className="mx-auto  p-3">
             {/* Search and sorting form */}
             <form className="flex mb-3 gap-3">
               <InputBox
@@ -92,7 +92,7 @@ function Favorites() {
               />
             </form>
           </section>
-          <div className="">
+          <div className="p-3">
             {/* if there aren't favorite contact show the message */}
             {contacts.filter((contact) => contact.isFavorite).length === 0 &&
               filteredContacts.length === 0 && (

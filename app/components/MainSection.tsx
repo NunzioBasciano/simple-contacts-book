@@ -58,14 +58,14 @@ function MainSection() {
   }, [searchQuery, handleSearch, contacts]); // Re-run when search query or contacts change
 
   return (
-    <main className="m-4 flex justify-between">
+    <main>
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       {loading ? (
         <p>Loading...</p>
       ) : (
         <div className="mx-auto">
           {/* Always show the filter and search form */}
-          <section className="mx-auto">
+          <section className="mx-auto p-3">
             <form className="flex mb-3 gap-3">
               <InputBox
                 inputType="text"
@@ -90,7 +90,7 @@ function MainSection() {
               />
             </form>
           </section>
-          <div className="">
+          <div className="p-3">
             {/* If no contacts exist, show the "add your first contact" message */}
             {contacts.length === 0 && (
               <p className="text-center text-white">{labels.addFirstContact}</p>
@@ -98,7 +98,7 @@ function MainSection() {
 
             {/* List of filtered contacts */}
             <section className="mx-auto">
-              <ul className="flex flex-col gap-4">
+              <ul className="flex flex-col gap-6">
                 {filteredContacts.map((item) => (
                   <div
                     className="flex items-center justify-between"

@@ -112,7 +112,7 @@ function AddContact() {
   };
 
   return (
-    <section>
+    <main>
       <form onSubmit={handleSubmit}>
         <div className="my-3">
           <div className="flex p-3 justify-between">
@@ -204,7 +204,7 @@ function AddContact() {
       {toastMessage && (
         <Toast message={toastMessage} type={toastType} onClose={closeToast} />
       )}
-    </section>
+    </main>
   );
 }
 

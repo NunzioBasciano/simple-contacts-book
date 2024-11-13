@@ -8,7 +8,9 @@ function Header(props: IHeaderProps) {
   const { label } = props;
   return (
     <header className="bg-[var(--orange)] p-3 flex items-center justify-between w-full">
-      <h1 className="text-xl">{label}</h1>
+      <div className="w-full max-w-[1200px] mx-auto">
+        <h1 className="text-xl">{label}</h1>
+      </div>
     </header>
   );
 }
