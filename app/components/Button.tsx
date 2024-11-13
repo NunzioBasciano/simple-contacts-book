@@ -7,12 +7,19 @@ interface IButtonProps {
   imageAlt?: string;
   style?: string;
   action?: () => void;
+  type?: "button" | "submit" | "reset";
+  validation?: boolean;
 }
 
 function Button(props: IButtonProps) {
-  const { label, image, imageAlt, style, action } = props;
+  const { label, image, imageAlt, style, action, type, validation } = props;
   return (
-    <button onClick={action} className={style}>
+    <button
+      onClick={action}
+      className={style}
+      type={type}
+      disabled={validation}
+    >
       {image && imageAlt && (
         <Image src={image} alt={imageAlt} width={20} height={20} />
       )}
