@@ -1,13 +1,19 @@
 "use client";
-import { getDetail } from "@/app/actions/getDetail";
+import Image from "next/image";
+import React, { useEffect, useState } from "react";
 import Button from "@/app/components/Button";
 import InputBox from "@/app/components/InputBox";
-import { labels } from "@/app/data/label";
-import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
 import Toast from "@/app/components/Toast"; // Importa il Toast personalizzato
+import { labels } from "@/app/data/label";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css"; // Import the PhoneInput CSS
+import { getDetail } from "@/app/actions/getDetail";
 import Modal from "@/app/components/Modal";
+import { editContact } from "@/app/actions/editContact";
+import { deleteContact } from "@/app/actions/deleteContact";
+import { IContact } from "@/app/(models)/contacts";
+import { getContacts } from "@/app/actions/getContacts";
 
 function Contact({
   params: paramsPromise,
@@ -21,12 +27,121 @@ function Contact({
     phone: "",
     email: "",
   });
+  const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [id, setId] = useState<string>("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<"success" | "error">("success");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false); // Stato per gestire la modale
+
+  // State for validation status of phone number and name
+  const [validPhone, setValidPhone] = useState(true);
+  const [validName, setValidName] = useState(true);
+  const [contacts, setContacts] = useState<IContact[]>([]);
+
+  const isFormValid =
+    formData.firstName.length > 3 && formData.phone.length > 10;
+
+  // Handle changes in form input fields
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  /**
+   * Handles phone number input changes
+   * @param value - The new phone number entered
+   */
+  const handlePhoneChange = (value: string) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      phone: value,
+    }));
+    setValidPhone(validatePhoneNumber(value));
+  };
+
+  /**
+   * Handles name input changes and validates the name length
+   * @param e - The change event for the name input
+   */
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+    setValidName(validateName(value)); // Validate name length
+  };
+
+  /**
+   * Validates phone number based on length and digits
+   * @param phoneNumber - The phone number to validate
+   * @returns true if valid, false otherwise
+   */
+  const validatePhoneNumber = (phoneNumber: string) => {
+    const phoneNumberPattern = /^\d{10,}$/; // Validates at least 10 digits
+    return phoneNumberPattern.test(phoneNumber);
+  };
+
+  /**
+   * Validates the name length (at least 3 characters)
+   * @param name - The name to validate
+   * @returns true if valid, false otherwise
+   */
+  const validateName = (name: string) => {
+    return name.length >= 3; //  Name should have at least 3 characters
+  };
+
+  // Handle form submission (update contact)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Check for duplicate phone
+    const phoneExists = contacts.some(
+      (contact) => contact.phone === formData.phone
+    );
+
+    // Check for duplicate name
+    const nameExists = contacts.some(
+      (contact) =>
+        contact.firstName === formData.firstName &&
+        contact.lastName === formData.lastName
+    );
+
+    if (phoneExists) {
+      setToastMessage("Numero esistente!"); // Show toast for duplicate phone number
+      setToastType("error");
+      return;
+    }
+
+    if (nameExists) {
+      setToastMessage("Il contatto esiste già!"); // Show toast for duplicate contact
+      setToastType("error");
+      return;
+    }
+
+    if (phoneExists && nameExists) {
+      setToastMessage("Il contatto esiste già!"); // Show toast for duplicate contact
+      setToastType("error");
+      return;
+    }
+
+    if (!validPhone || !validName) {
+      return; // Non inviare il form se i dati non sono validi
+    }
+    try {
+      await editContact(formData);
+      setToastMessage("Contact updated successfully!");
+      setToastType("success");
+    } catch (error) {
+      console.error("Error:", error);
+      setToastMessage("Error updating contact.");
+      setToastType("error");
+    }
+  };
 
   // useEffect to fetch contact details and populate the form fields when the component mounts or `id` changes
   useEffect(() => {
@@ -64,51 +179,24 @@ function Contact({
     fetchContact();
   }, [paramsPromise, id]);
 
-  // Handle changes in form input fields
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
-
-  // Handle form submission (update contact)
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await fetch(`/api/contacts/${formData._id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!res.ok) {
-        throw new Error("Error updating contact");
+  // Fetch contacts data on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await getContacts(); // Fetch the contacts data
+        setContacts(data.contacts); // Set the fetched contacts in state
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          // Handle error (if necessary)
+        }
       }
-      await res.json();
-      setToastMessage("Contact updated successfully!");
-      setToastType("success");
-    } catch (error) {
-      console.error("Error:", error);
-      setToastMessage("Error updating contact.");
-      setToastType("error");
-    }
-  };
+    };
+    loadData();
+  }, []); // Dependency array is empty, so this runs only on mount
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`/api/contacts/${formData._id}`, {
-        method: "DELETE", // DELETE request to the server
-      });
-
-      if (!res.ok) {
-        throw new Error("Error deleting contact");
-      }
-
-      // Aggiorniamo il messaggio del toast a "Success Delete"
+      await deleteContact(formData._id);
       setToastMessage("Contact deleted successfully!");
       setToastType("success");
 
@@ -157,6 +245,8 @@ function Contact({
                   <Button
                     label="Save"
                     style="bg-[var(--orange)] px-4 py-1 rounded-xl text-white flex item-center justify-center text-2xl"
+                    type="submit"
+                    validation={!isFormValid}
                   />
                 </div>
               </div>
@@ -165,8 +255,13 @@ function Contact({
                   inputName={"firstName"}
                   placeholder="Name"
                   value={formData.firstName}
-                  onChange={handleChange}
+                  onChange={handleNameChange}
                 />
+                {!validName && (
+                  <p className="text-red-500">
+                    The name field should be contain more than 3 caracters
+                  </p>
+                )}
                 <InputBox
                   inputName={"lastName"}
                   placeholder="Surname"
@@ -180,13 +275,38 @@ function Contact({
                   value={formData.email}
                   onChange={handleChange}
                 />
-                <InputBox
-                  inputType="tel"
-                  inputName={"phone"}
-                  placeholder="Phone Number:"
+                <PhoneInput
+                  country={"it"}
+                  placeholder="Phone Number"
                   value={formData.phone}
-                  onChange={handleChange}
+                  onChange={handlePhoneChange}
+                  containerStyle={{
+                    width: "100%",
+                  }}
+                  inputStyle={{
+                    backgroundColor: "var(--darkBlue)",
+                    padding: "4px 48px",
+                    width: "100%",
+                    border: "1px solid",
+                    borderRadius: "0.375rem",
+                    color: "white",
+                  }}
+                  buttonStyle={{
+                    backgroundColor: "var(--darkBlue)",
+                    borderTopLeftRadius: "0.375rem",
+                    borderBottomLeftRadius: "0.375rem",
+                    borderRight: "1px solid white",
+                  }}
+                  dropdownStyle={{
+                    backgroundColor: "var(--darkBlue)",
+                    color: "white",
+                  }}
                 />
+                {!validPhone && (
+                  <p className="text-red-500">
+                    The phone number must contain at least 10 digits
+                  </p>
+                )}
               </div>
             </form>
             <div className="flex items-center justify-center">

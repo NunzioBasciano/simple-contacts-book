@@ -9,8 +9,15 @@ import Toast from "../components/Toast";
 import { labels } from "../data/label";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css"; // Import the PhoneInput CSS
+<<<<<<< HEAD
+=======
+import { IContact } from "../(models)/contacts";
+import { getContacts } from "../actions/getContacts";
+>>>>>>> dev2
 
+// Main AddContact component
 function AddContact() {
+  // State to manage form input data
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -18,6 +25,8 @@ function AddContact() {
     email: "",
     isFavorite: false,
   });
+
+  // State for managing Toast notifications
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastType, setToastType] = useState<"success" | "error">("success");
 
@@ -25,9 +34,20 @@ function AddContact() {
   const [validPhone, setValidPhone] = useState(true);
   const [validName, setValidName] = useState(true);
 
+<<<<<<< HEAD
   const isFormValid =
     formData.firstName.length > 3 && formData.phone.length > 10;
 
+=======
+  // State to store the list of contacts
+  const [contacts, setContacts] = useState<IContact[]>([]);
+
+  // Check if the form is valid based on the first name and phone fields
+  const isFormValid =
+    formData.firstName.length > 3 && formData.phone.length > 10;
+
+  // Handle change for text inputs (name, email, etc.)
+>>>>>>> dev2
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevState) => ({
@@ -86,13 +106,53 @@ function AddContact() {
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+<<<<<<< HEAD
     if (!validPhone && !validName) {
       return; // Do not submit the form if phone or name is invalid
     }
+=======
+
+    // Check if the phone number already exists in the contacts
+    const phoneExists = contacts.some(
+      (contact) => contact.phone === formData.phone
+    );
+
+    // Check if the name already exists in the contacts
+    const nameExists = contacts.some(
+      (contact) =>
+        contact.firstName === formData.firstName &&
+        contact.lastName === formData.lastName
+    );
+
+    // Show toast if phone number or name already exist
+    if (phoneExists) {
+      setToastMessage("Number already exists!"); // Show toast for duplicate phone number
+      setToastType("error");
+      return;
+    }
+
+    if (nameExists) {
+      setToastMessage("Contact already exists!"); // Show toast for duplicate name
+      setToastType("error");
+      return;
+    }
+
+    // Don't submit if phone or name is not valid
+    if (!validPhone || !validName) {
+      return;
+    }
+
+>>>>>>> dev2
     try {
+      // Save the contact to the database
       await saveContact(formData);
+<<<<<<< HEAD
       setToastMessage("Contact saved successfully!"); // Success message
+=======
+      setToastMessage("Contact saved successfully!");
+>>>>>>> dev2
       setToastType("success");
+      // Reset form data
       setFormData({
         firstName: "",
         lastName: "",
@@ -101,22 +161,45 @@ function AddContact() {
         isFavorite: false,
       });
     } catch (error) {
-      setToastMessage("Errore durante il salvataggio del contatto.");
+      // Handle errors during saving contact
+      setToastMessage("Error saving contact.");
       setToastType("error");
       console.log(error);
     }
   };
 
+  // Close the Toast notification
   const closeToast = () => {
     setToastMessage(null);
   };
 
+  // Fetch contacts data on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const data = await getContacts(); // Fetch the contacts data
+        setContacts(data.contacts); // Set the fetched contacts in state
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          // Handle error (if necessary)
+        }
+      }
+    };
+    loadData();
+  }, []); // Dependency array is empty, so this runs only on mount
+
   return (
+<<<<<<< HEAD
     <section>
+=======
+    <main>
+      {/* Form for adding a new contact */}
+>>>>>>> dev2
       <form onSubmit={handleSubmit}>
         <div className="my-3">
           <div className="flex p-3 justify-between">
             <div className="flex items-center gap-6">
+              {/* Close button */}
               <Link href={"/"}>
                 <Image
                   src="/close.png"
@@ -126,8 +209,10 @@ function AddContact() {
                   style={{ objectFit: "contain" }}
                 />
               </Link>
+              {/* Heading */}
               <h2 className="text-3xl">{labels.addContact}</h2>
             </div>
+            {/* Save button */}
             <Button
               label="Save"
               style={`${
@@ -136,10 +221,16 @@ function AddContact() {
                   : "bg-[var(--blue)] px-4 py-1 rounded-xl cursor-not-allowed"
               } flex item-center justify-center text-2xl`}
               type="submit"
+<<<<<<< HEAD
               validation={!isFormValid} // Disabilita il pulsante se isFormValid è false
+=======
+              validation={!isFormValid} // Disable button if form is invalid
+>>>>>>> dev2
             />
           </div>
         </div>
+
+        {/* Input fields */}
         <div className="flex flex-col px-9 py-3 gap-6">
           <InputBox
             inputName={"firstName"}
@@ -149,7 +240,11 @@ function AddContact() {
           />
           {!validName && (
             <p className="text-red-500">
+<<<<<<< HEAD
               The name field should be contain more than 3 caracters
+=======
+              The name field should be contain more than 3 characters
+>>>>>>> dev2
             </p>
           )}
           <InputBox
@@ -165,6 +260,10 @@ function AddContact() {
             value={formData.email}
             onChange={handleChange}
           />
+<<<<<<< HEAD
+=======
+          {/* Phone input field */}
+>>>>>>> dev2
           <PhoneInput
             country={"it"}
             placeholder="Phone Number"
@@ -192,6 +291,10 @@ function AddContact() {
               color: "white",
             }}
           />
+<<<<<<< HEAD
+=======
+          {/* Show validation error for invalid phone number */}
+>>>>>>> dev2
           {!validPhone && (
             <p className="text-red-500">
               The phone number must contain at least 10 digits
@@ -200,11 +303,11 @@ function AddContact() {
         </div>
       </form>
 
-      {/* Condizione per mostrare il Toast */}
+      {/* Show toast notification */}
       {toastMessage && (
         <Toast message={toastMessage} type={toastType} onClose={closeToast} />
       )}
-    </section>
+    </main>
   );
 }
 

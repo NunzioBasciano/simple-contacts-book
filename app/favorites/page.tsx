@@ -60,7 +60,7 @@ function Favorites() {
   }, [contacts, searchQuery, handleSearch]); // The effect runs whenever contacts, searchQuery, or handleSearch change
 
   return (
-    <main className="m-4 flex justify-between">
+    <main className="p-4 flex justify-between">
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       {loading ? (
         <p>Loading...</p>
