@@ -60,13 +60,13 @@ function Favorites() {
   }, [contacts, searchQuery, handleSearch]); // The effect runs whenever contacts, searchQuery, or handleSearch change
 
   return (
-    <main className="p-4 flex justify-between">
+    <main className=" flex justify-between">
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="mx-auto">
-          <section className="mx-auto">
+        <div className="mx-auto max-h-[85vh] overflow-y-auto">
+          <section className="mx-auto p-3">
             {/* Search and sorting form */}
             <form className="flex mb-3 gap-3">
               <InputBox
@@ -106,7 +106,7 @@ function Favorites() {
                 <ul className="flex flex-col gap-4">
                   {filteredContacts.map((item) => (
                     <div
-                      className="flex items-center justify-between"
+                      className="flex items-center justify-between px-3"
                       key={item._id}
                     >
                       <Link href={`/contacts/${item._id}`}>

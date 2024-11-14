@@ -170,11 +170,11 @@ function AddContact() {
   }, []); // Dependency array is empty, so this runs only on mount
 
   return (
-    <main>
+    <main className="p-4 flex justify-center">
       {/* Form for adding a new contact */}
       <form onSubmit={handleSubmit}>
         <div className="my-3">
-          <div className="flex p-3 justify-between">
+          <div className="flex justify-between">
             <div className="flex items-center gap-6">
               {/* Close button */}
               <Link href={"/"}>

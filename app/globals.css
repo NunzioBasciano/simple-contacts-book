@@ -21,6 +21,11 @@ body {
   padding: 0;
   box-sizing: border-box;
   margin: 0 auto;
+  
+}
+
+main {
+  min-height: calc(100dvh - 70px - 70px);
 }
 
 h1,
@@ -43,4 +48,24 @@ p {
   line-height: 1.3rem;
   font-weight: 300;
   font-size: 14px;
+}
+
+/* Stile per Chrome, Safari e Edge */
+main::-webkit-scrollbar {
+  width: 8px; /* Larghezza della scrollbar */
+}
+
+main::-webkit-scrollbar-track {
+  background: #1c1c1c; /* Colore del background della scrollbar */
+}
+
+main::-webkit-scrollbar-thumb {
+  background-color: var(--blue); /* Colore della barra */
+  border-radius: 4px; /* Arrotonda i bordi */
+}
+
+/* Stile per Firefox */
+main {
+  scrollbar-width: thin; /* Rende la scrollbar più sottile */
+  scrollbar-color: var(--blue) var(--darkBlue); /* Colore della barra e dello sfondo */
 }
