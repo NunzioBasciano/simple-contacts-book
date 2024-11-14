@@ -50,22 +50,22 @@ p {
   font-size: 14px;
 }
 
-/* Stile per Chrome, Safari e Edge */
+
 main::-webkit-scrollbar {
-  width: 8px; /* Larghezza della scrollbar */
+  width: 8px; /* scrollbar width */
 }
 
 main::-webkit-scrollbar-track {
-  background: #1c1c1c; /* Colore del background della scrollbar */
+  background: #1c1c1c; /* scrollbar background */
 }
 
 main::-webkit-scrollbar-thumb {
-  background-color: var(--blue); /* Colore della barra */
-  border-radius: 4px; /* Arrotonda i bordi */
+  background-color: var(--blue); /* scrollbar colora */
+  border-radius: 4px; 
 }
 
 /* Stile per Firefox */
 main {
-  scrollbar-width: thin; /* Rende la scrollbar più sottile */
-  scrollbar-color: var(--blue) var(--darkBlue); /* Colore della barra e dello sfondo */
+  scrollbar-width: thin; /*  scrollbar style */
+  scrollbar-color: var(--blue) var(--darkBlue); 
 }
