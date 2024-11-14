@@ -220,7 +220,7 @@ function Contact({
   };
 
   return (
-    <section>
+    <main className="p-4 flex flex-col items-center w-full">
       {errorMessage && <p>{errorMessage}</p>}
       {loading ? (
         <p>Loading...</p>
@@ -229,7 +229,7 @@ function Contact({
           <>
             <form onSubmit={handleSubmit}>
               <div className="my-3">
-                <div className="flex p-3 justify-between">
+                <div className="flex justify-between">
                   <div className="flex items-center gap-6">
                     <Link href={"/"}>
                       <Image
@@ -244,9 +244,13 @@ function Contact({
                   </div>
                   <Button
                     label="Save"
-                    style="bg-[var(--orange)] px-4 py-1 rounded-xl text-white flex item-center justify-center text-2xl"
+                    style={`${
+                      isFormValid
+                        ? "bg-[var(--orange)] px-4 py-1 rounded-xl text-white"
+                        : "bg-[var(--blue)] px-4 py-1 rounded-xl cursor-not-allowed"
+                    } flex item-center justify-center text-2xl`}
                     type="submit"
-                    validation={!isFormValid}
+                    validation={!isFormValid} // Disable button if form is invalid
                   />
                 </div>
               </div>
@@ -309,7 +313,7 @@ function Contact({
                 )}
               </div>
             </form>
-            <div className="flex items-center justify-center">
+            <div className="flex justify-center items-center my-auto">
               <Button
                 action={openModal}
                 label="Delete"
@@ -332,7 +336,7 @@ function Contact({
         closeModal={closeModal}
         handleDelete={handleDelete}
       />
-    </section>
+    </main>
   );
 }
 
