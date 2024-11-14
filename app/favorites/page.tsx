@@ -6,11 +6,11 @@ import { getContacts } from "../actions/getContacts";
 import InputBox from "../components/InputBox";
 import SelectBox from "../components/SelectBox";
 import { useFiltersAndSorting } from "../data/filter";
-import { optionCriterion } from "../data/optionCriterion";
 import { optionOrder } from "../data/optionOrder";
 import { handleFavoriteToggle } from "../data/favoriteUtils";
 import Button from "../components/Button";
 import { labels } from "../data/label";
+import { optionCriterion } from "../data/optionCriterion";
 
 function Favorites() {
   const [contacts, setContacts] = useState<IContact[]>([]);
@@ -60,7 +60,11 @@ function Favorites() {
   }, [contacts, searchQuery, handleSearch]); // The effect runs whenever contacts, searchQuery, or handleSearch change
 
   return (
+<<<<<<< HEAD
     <main className="">
+=======
+    <main className="p-4 flex justify-between">
+>>>>>>> main
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       {loading ? (
         <p>Loading...</p>

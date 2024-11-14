@@ -21,6 +21,7 @@ body {
   padding: 0;
   box-sizing: border-box;
   margin: 0 auto;
+<<<<<<< HEAD
   max-width: 100vw;
   overflow-x: hidden;
 }
@@ -32,6 +33,10 @@ main {
   margin: 0 auto;
 }
 
+=======
+}
+
+>>>>>>> main
 h1,
 h2,
 h3,

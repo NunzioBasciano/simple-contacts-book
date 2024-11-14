@@ -1,11 +1,11 @@
 import React from "react";
 
 interface ISelectBoxProps {
-  options: { value: string; label: string }[]; // Lista di opzioni
-  value: string; // Valore selezionato
-  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void; // Funzione di gestione del cambiamento
-  id: string; // ID per il `select`
-  className?: string; // Classe opzionale per lo stile
+  options: { value: string; label: string }[];
+  value: string;
+  onChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  id: string;
+  className?: string;
 }
 
 function SelectBox(props: ISelectBoxProps) {

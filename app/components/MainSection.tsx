@@ -58,7 +58,11 @@ function MainSection() {
   }, [searchQuery, handleSearch, contacts]); // Re-run when search query or contacts change
 
   return (
+<<<<<<< HEAD
     <main>
+=======
+    <main className="p-4 flex justify-between">
+>>>>>>> main
       {errorMessage && <p className="text-red-500">{errorMessage}</p>}
       {loading ? (
         <p>Loading...</p>

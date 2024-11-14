@@ -7,31 +7,23 @@ interface IButtonProps {
   imageAlt?: string;
   style?: string;
   action?: () => void;
-  type?: "button" | "submit" | "reset"; // Aggiunto tipo per la sicurezza
+  type?: "button" | "submit" | "reset";
   validation?: boolean;
 }
 
 function Button(props: IButtonProps) {
-  const {
-    label,
-    image,
-    imageAlt,
-    style,
-    action,
-    type = "button",
-    validation,
-  } = props; // Default type to 'button'
-
+  const { label, image, imageAlt, style, action, type, validation } = props;
   return (
     <button
-      type={type}
       onClick={action}
       className={style}
+      type={type}
       disabled={validation}
     >
       {image && imageAlt && (
         <Image src={image} alt={imageAlt} width={20} height={20} />
       )}
+
       {label}
     </button>
   );
