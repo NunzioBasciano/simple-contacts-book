@@ -1,5 +1,5 @@
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
 import Button from "./Button";
 import { IContact } from "../(models)/contacts";
 import { handleFavoriteToggle } from "../data/favoriteUtils";

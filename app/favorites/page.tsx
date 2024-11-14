@@ -1,14 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import { IContact } from "../(models)/contacts";
 import { getContacts } from "../actions/getContacts";
 import InputBox from "../components/InputBox";
 import SelectBox from "../components/SelectBox";
 import { useFiltersAndSorting } from "../data/filter";
 import { optionOrder } from "../data/optionOrder";
-import { handleFavoriteToggle } from "../data/favoriteUtils";
-import Button from "../components/Button";
 import { labels } from "../data/label";
 import { optionCriterion } from "../data/optionCriterion";
 import Card from "../components/Card";
