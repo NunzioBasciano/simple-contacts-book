@@ -11,6 +11,7 @@ import Button from "./Button";
 import { useFiltersAndSorting } from "../data/filter";
 import { handleFavoriteToggle } from "../data/favoriteUtils";
 import { labels } from "../data/label";
+import Card from "./Card";
 
 function MainSection() {
   const [contacts, setContacts] = useState<IContact[]>([]);
@@ -100,46 +101,12 @@ function MainSection() {
             <section className="mx-auto">
               <ul className="flex flex-col gap-4">
                 {filteredContacts.map((item) => (
-                  <div
-                    className="flex items-center justify-between px-3"
+                  <Card
                     key={item._id}
-                  >
-                    <Link href={`/contacts/${item._id}`}>
-                      <li className="flex items-center gap-2">
-                        <div className="bg-[var(--orange)] p-2 rounded-full w-[30px] h-[30px] flex items-center justify-center">
-                          {(item.lastName && item.lastName[0]) ||
-                            (item.firstName && item.firstName[0])}
-                        </div>
-                        <div>
-                          <div>
-                            {item.firstName} {item.lastName}
-                          </div>
-                          <div>{item.email}</div>
-                        </div>
-                      </li>
-                    </Link>
-
-                    {/* Button to toggle favorite status */}
-                    <Button
-                      action={() => {
-                        if (item._id && item.isFavorite !== undefined) {
-                          handleFavoriteToggle(
-                            item._id,
-                            item.isFavorite,
-                            setContacts,
-                            setFilteredContacts
-                          );
-                        } else {
-                          console.error("Contatto senza ID valido.");
-                        }
-                      }}
-                      image={
-                        item.isFavorite ? "/heart-full.png" : "/heart-empty.png"
-                      }
-                      imageAlt={item.isFavorite ? "full heart" : "empty heart"}
-                      style="flex item-center justify-center w-[30px] h-[30px]"
-                    />
-                  </div>
+                    item={item}
+                    setState={setContacts}
+                    setFilteredContacts={setFilteredContacts}
+                  />
                 ))}
               </ul>
             </section>
