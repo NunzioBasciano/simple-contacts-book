@@ -14,9 +14,12 @@ function Card(props: ICard) {
   const { item, setState, setFilteredContacts } = props;
 
   return (
-    <div className="flex items-center justify-between px-3" key={item._id}>
+    <div
+      className="flex items-center justify-between px-3 py-2 shadow-custom"
+      key={item._id}
+    >
       <Link href={`/contacts/${item._id}`}>
-        <li className="flex items-center gap-2">
+        <li className="flex items-center gap-2 flex-grow">
           <div className="bg-[var(--orange)] p-2 rounded-full w-[30px] h-[30px] flex items-center justify-center">
             {(item.lastName && item.lastName[0]) ||
               (item.firstName && item.firstName[0])}
@@ -31,23 +34,25 @@ function Card(props: ICard) {
       </Link>
 
       {/* Button to toggle favorite status */}
-      <Button
-        action={() => {
-          if (item._id && item.isFavorite !== undefined) {
-            handleFavoriteToggle(
-              item._id,
-              item.isFavorite,
-              setState,
-              setFilteredContacts
-            );
-          } else {
-            console.error("Contatto senza ID valido.");
-          }
-        }}
-        image={item.isFavorite ? "/heart-full.png" : "/heart-empty.png"}
-        imageAlt={item.isFavorite ? "full heart" : "empty heart"}
-        style="flex item-center justify-center w-[30px] h-[30px]"
-      />
+      <div className="flex items-center justify-center ml-3">
+        <Button
+          action={() => {
+            if (item._id && item.isFavorite !== undefined) {
+              handleFavoriteToggle(
+                item._id,
+                item.isFavorite,
+                setState,
+                setFilteredContacts
+              );
+            } else {
+              console.error("Contatto senza ID valido.");
+            }
+          }}
+          image={item.isFavorite ? "/heart-full.png" : "/heart-empty.png"}
+          imageAlt={item.isFavorite ? "full heart" : "empty heart"}
+          style="w-[30px] h-[30px]"
+        />
+      </div>
     </div>
   );
 }

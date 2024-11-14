@@ -63,7 +63,7 @@ function Favorites() {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <div className="mx-auto max-h-[79vh] overflow-y-auto">
+        <div className="mx-auto max-h-[79dvh] overflow-y-auto">
           <section className="mx-auto p-3">
             {/* Search and sorting form */}
             <form className="flex mb-3 gap-3">
