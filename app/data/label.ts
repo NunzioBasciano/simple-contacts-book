@@ -1,5 +1,5 @@
 export const labels = {
-    SimpleContactBook: 'Simple Contact Book',
+    SimpleContactBook: 'Simple Contacts Book',
     favoritesLabel: 'Favorites',
     searchAlt: 'Search icon',
     addContact: 'Add contact',
