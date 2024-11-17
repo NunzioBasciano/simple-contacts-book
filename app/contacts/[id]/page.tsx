@@ -12,8 +12,8 @@ import { getDetail } from "@/app/actions/getDetail";
 import Modal from "@/app/components/Modal";
 import { editContact } from "@/app/actions/editContact";
 import { deleteContact } from "@/app/actions/deleteContact";
-import { IContact } from "@/app/(models)/contacts";
-import { getContacts } from "@/app/actions/getContacts";
+import { validateName } from "@/app/data/validateName";
+import { validatePhoneNumber } from "@/app/data/validatePhoneNumber";
 
 function Contact({
   params: paramsPromise,
@@ -37,10 +37,9 @@ function Contact({
   // State for validation status of phone number and name
   const [validPhone, setValidPhone] = useState(true);
   const [validName, setValidName] = useState(true);
-  const [contacts, setContacts] = useState<IContact[]>([]);
 
   const isFormValid =
-    formData.firstName.length > 3 && formData.phone.length > 10;
+    formData.firstName.length >= 3 && formData.phone.length > 10;
 
   // Handle changes in form input fields
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,58 +75,9 @@ function Contact({
     setValidName(validateName(value)); // Validate name length
   };
 
-  /**
-   * Validates phone number based on length and digits
-   * @param phoneNumber - The phone number to validate
-   * @returns true if valid, false otherwise
-   */
-  const validatePhoneNumber = (phoneNumber: string) => {
-    const phoneNumberPattern = /^\d{10,}$/; // Validates at least 10 digits
-    return phoneNumberPattern.test(phoneNumber);
-  };
-
-  /**
-   * Validates the name length (at least 3 characters)
-   * @param name - The name to validate
-   * @returns true if valid, false otherwise
-   */
-  const validateName = (name: string) => {
-    return name.length >= 3; //  Name should have at least 3 characters
-  };
-
   // Handle form submission (update contact)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Check for duplicate phone
-    const phoneExists = contacts.some(
-      (contact) => contact.phone === formData.phone
-    );
-
-    // Check for duplicate name
-    const nameExists = contacts.some(
-      (contact) =>
-        contact.firstName === formData.firstName &&
-        contact.lastName === formData.lastName
-    );
-
-    if (phoneExists) {
-      setToastMessage("Numero esistente!"); // Show toast for duplicate phone number
-      setToastType("error");
-      return;
-    }
-
-    if (nameExists) {
-      setToastMessage("Il contatto esiste già!"); // Show toast for duplicate contact
-      setToastType("error");
-      return;
-    }
-
-    if (phoneExists && nameExists) {
-      setToastMessage("Il contatto esiste già!"); // Show toast for duplicate contact
-      setToastType("error");
-      return;
-    }
 
     if (!validPhone || !validName) {
       return; // Non inviare il form se i dati non sono validi
@@ -179,24 +129,10 @@ function Contact({
     fetchContact();
   }, [paramsPromise, id]);
 
-  // Fetch contacts data on component mount
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const data = await getContacts(); // Fetch the contacts data
-        setContacts(data.contacts); // Set the fetched contacts in state
-      } catch (error: unknown) {
-        if (error instanceof Error) {
-          // Handle error (if necessary)
-        }
-      }
-    };
-    loadData();
-  }, []); // Dependency array is empty, so this runs only on mount
-
   const handleDelete = async () => {
     try {
       await deleteContact(formData._id);
+      closeModal();
       setToastMessage("Contact deleted successfully!");
       setToastType("success");
 

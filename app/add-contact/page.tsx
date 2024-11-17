@@ -11,6 +11,8 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css"; // Import the PhoneInput CSS
 import { IContact } from "../(models)/contacts";
 import { getContacts } from "../actions/getContacts";
+import { validateName } from "../data/validateName";
+import { validatePhoneNumber } from "../data/validatePhoneNumber";
 
 // Main AddContact component
 function AddContact() {
@@ -36,7 +38,7 @@ function AddContact() {
 
   // Check if the form is valid based on the first name and phone fields
   const isFormValid =
-    formData.firstName.length > 3 && formData.phone.length > 10;
+    formData.firstName.length >= 3 && formData.phone.length > 10;
 
   // Handle change for text inputs (name, email, etc.)
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -70,25 +72,6 @@ function AddContact() {
       [name]: value,
     }));
     setValidName(validateName(value)); // Validate name length
-  };
-
-  /**
-   * Validates phone number based on length and digits
-   * @param phoneNumber - The phone number to validate
-   * @returns true if valid, false otherwise
-   */
-  const validatePhoneNumber = (phoneNumber: string) => {
-    const phoneNumberPattern = /^\d{10,}$/; // Validates at least 10 digits
-    return phoneNumberPattern.test(phoneNumber);
-  };
-
-  /**
-   * Validates the name length (at least 3 characters)
-   * @param name - The name to validate
-   * @returns true if valid, false otherwise
-   */
-  const validateName = (name: string) => {
-    return name.length >= 3; //  Name should have at least 3 characters
   };
 
   /**
