@@ -99,36 +99,6 @@ function Contact({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Check for duplicate phone
-    const phoneExists = contacts.some(
-      (contact) => contact.phone === formData.phone
-    );
-
-    // Check for duplicate name
-    const nameExists = contacts.some(
-      (contact) =>
-        contact.firstName === formData.firstName &&
-        contact.lastName === formData.lastName
-    );
-
-    if (phoneExists) {
-      setToastMessage("Numero esistente!"); // Show toast for duplicate phone number
-      setToastType("error");
-      return;
-    }
-
-    if (nameExists) {
-      setToastMessage("Il contatto esiste già!"); // Show toast for duplicate contact
-      setToastType("error");
-      return;
-    }
-
-    if (phoneExists && nameExists) {
-      setToastMessage("Il contatto esiste già!"); // Show toast for duplicate contact
-      setToastType("error");
-      return;
-    }
-
     if (!validPhone || !validName) {
       return; // Non inviare il form se i dati non sono validi
     }
